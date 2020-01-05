@@ -1,0 +1,95 @@
+\begin{thebibliography}{}
+
+\bibitem [\protect \citeauthoryear {%
+Gjerloev%
+\ \protect \BOthers {.}}{%
+Gjerloev%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {2011}}%
+}]{%
+Gjerloev11}
+\APACinsertmetastar {%
+Gjerloev11}%
+\begin{APACrefauthors}%
+Gjerloev, J\BPBI W.%
+, Ohtani, S.%
+, Iijima, T.%
+, Anderson, B.%
+, Slavin, J.%
+\BCBL {}\ \BBA {} Le, G.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2011}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Characteristics of the terrestrial field-aligned current
+  system} {Characteristics of the terrestrial field-aligned current
+  system}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{Annales Geophysicae}{29}{10}{1713--1729}.
+\newblock
+\begin{APACrefDOI} \doi{10.5194/angeo-29-1713-2011} \end{APACrefDOI}
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Kane%
+\ \protect \BOthers {.}}{%
+Kane%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {2018}}%
+}]{%
+Kane18}
+\APACinsertmetastar {%
+Kane18}%
+\begin{APACrefauthors}%
+Kane, T\BPBI J.%
+, Hillman, P\BPBI D.%
+, Denman, C\BPBI A.%
+, Hart, M.%
+, Phillip~Scott, R.%
+, Purucker, M\BPBI E.%
+\BCBL {}\ \BBA {} Potashnik, S\BPBI J.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2018}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Laser Remote Magnetometry Using Mesospheric Sodium}
+  {Laser remote magnetometry using mesospheric sodium}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{Journal of Geophysical Research: Space
+  Physics}{123}{8}{6171-6188}.
+\newblock
+\begin{APACrefDOI} \doi{10.1029/2018JA025178} \end{APACrefDOI}
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Yee%
+, Gjerloev%
+\BCBL {}\ \BBA {} Wu%
+}{%
+Yee%
+\ \protect \BOthers {.}}{%
+{\protect \APACyear {2020}}%
+}]{%
+Yee20}
+\APACinsertmetastar {%
+Yee20}%
+\begin{APACrefauthors}%
+Yee, J\BPBI H.%
+, Gjerloev, J\BPBI W.%
+\BCBL {}\ \BBA {} Wu, D\BPBI L.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2020}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {{Remote Sensing of Magnetic Fields Induced by
+  Electrojets From Space: Measurement Techniques and Sensor Design}} {{Remote
+  Sensing of Magnetic Fields Induced by Electrojets From Space: Measurement
+  Techniques and Sensor Design}}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{jgr?}{}{}{}.
+\PrintBackRefs{\CurrentBib}
+
+\end{thebibliography}
