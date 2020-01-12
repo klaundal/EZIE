@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2017.10.17)  9 JAN 2020 21:10
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2017.10.17)  12 JAN 2020 12:05
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -361,9 +361,9 @@ es, in-ferred from the spa-tiotem-
  []
 
 
-Overfull \hbox (3.48778pt too wide) in paragraph at lines 168--169
-\OT1/cmr/m/n/10 po-ral charecter-is-tics of mag-netic field-aligned cur-rents. 
-We also dis-cuss how a con-stel- 
+Overfull \hbox (4.04335pt too wide) in paragraph at lines 168--169
+\OT1/cmr/m/n/10 po-ral char-ac-ter-is-tics of mag-netic field-aligned cur-rents
+. We also dis-cuss how a con-stel- 
  []
 
 
@@ -374,86 +374,107 @@ Overfull \hbox (14.96016pt too wide) in paragraph at lines 168--169
 
 
 Overfull \hbox (11.1823pt too wide) in paragraph at lines 168--169
-\OT1/cmr/m/n/10 ment (Yee et al., 2020), could be used to es-sen-tially im-age 
-the equiv-a-lent cur-rent at un- 
+\OT1/cmr/m/n/10 ment []Yee et al.[], 2020), could be used to es-sen-tially im-a
+ge the equiv-a-lent cur-rent at un- 
  []
 
 
 LaTeX Font Warning: Font shape `OT1/cmr/m/n' in size <10.5> not available
-(Font)              size <10.95> substituted on input line 173.
+(Font)              size <10.95> substituted on input line 174.
 
 
 LaTeX Font Warning: Font shape `OT1/cmr/bx/n' in size <10.5> not available
-(Font)              size <10.95> substituted on input line 173.
+(Font)              size <10.95> substituted on input line 174.
 
 
-Overfull \hbox (19.43239pt too wide) in paragraph at lines 208--209
+Overfull \hbox (19.43239pt too wide) in paragraph at lines 209--210
 []\OT1/cmr/m/n/10 Electrojet tra-di-tion-ally mea-sured from ground + later sat
 el-lites. Dis-ad-van-tage: Dis- 
  []
 
 
-Overfull \hbox (2.07109pt too wide) in paragraph at lines 208--209
+Overfull \hbox (2.07109pt too wide) in paragraph at lines 209--210
 \OT1/cmr/m/n/10 tance $\OML/cmm/m/it/10 >$ \OT1/cmr/m/n/10 100 km, which re-mov
 es fine scale struc-tures. $\OMS/cmsy/m/n/10 )$ \OT1/cmr/m/n/10 elec-tro-jet sp
 a-tial struc-ture is 
  []
 
 
-Overfull \hbox (8.84894pt too wide) in paragraph at lines 210--211
-[]\OT1/cmr/m/n/10 New tech-niques avail-able (EZIE []Yee et al.[], 2020)+ maybe
- sodium laser mea-sure- 
+LaTeX Warning: Citation `Yee20' undefined on input line 211.
+
+
+Overfull \hbox (9.73785pt too wide) in paragraph at lines 211--212
+[]\OT1/cmr/m/n/10 New tech-niques avail-able (EZIE []?, ?)+ maybe sodium laser 
+mea-sure-ments []Kane 
  []
 
 
-Overfull \hbox (21.73792pt too wide) in paragraph at lines 210--211
-\OT1/cmr/m/n/10 ments []Kane et al.[], 2018) ), which of-fer the po-ten-tial to
- dis-tin-guish be-tween dif-fer-ent fine- 
+Overfull \hbox (11.54341pt too wide) in paragraph at lines 211--212
+\OT1/cmr/m/n/10 et al.[], 2018) ), which of-fer the po-ten-tial to dis-tin-guis
+h be-tween dif-fer-ent fine-scale struc- 
  []
 
 
-Overfull \hbox (0.90756pt too wide) in paragraph at lines 212--212
+Overfull \hbox (0.90756pt too wide) in paragraph at lines 213--213
 []\OT1/cmr/bx/n/10 Prediction of meso-spheric mag-netic field dis-tur-bance mag
 -ni-tudes  
  []
 
 
-Overfull \hbox (10.19615pt too wide) in paragraph at lines 213--214
+Overfull \hbox (10.19615pt too wide) in paragraph at lines 214--215
 []\OT1/cmr/m/n/10 Use []Gjerloev et al.[], 2011) FAC-based spec-trum to make sy
 n-thetic equiv-a-lent cur- 
  []
 
 
-Overfull \hbox (0.54341pt too wide) in paragraph at lines 213--214
-\OT1/cmr/m/n/10 rent that has the same mag-netic power spec-trum. Use stan-dard
- ra-dial de-pen-dence to 
+Overfull \hbox (5.3212pt too wide) in paragraph at lines 214--215
+\OT1/cmr/m/n/10 rent that has the same mag-netic field spa-tial power spec-trum
+. Use stan-dard ra-dial de- 
  []
 
 
-Overfull \hbox (1.01566pt too wide) in paragraph at lines 213--214
-\OT1/cmr/m/n/10 cal-cu-late struc-ture and mag-ni-tude of mag-netic field be-lo
-w iono-sphere. The re-sult is a 
+Overfull \hbox (10.59903pt too wide) in paragraph at lines 214--215
+\OT1/cmr/m/n/10 pen-dence to cal-cu-late struc-ture and mag-ni-tude of mag-neti
+c field be-low iono-sphere. The 
  []
 
 
-Overfull \hbox (1.76573pt too wide) in paragraph at lines 213--214
-\OT1/cmr/m/n/10 the-o-ret-i-cal pre-dic-tion of the av-er-age mag-ni-tude of th
-e mag-netic field per-tur-ba-tions as 
+Overfull \hbox (7.34901pt too wide) in paragraph at lines 214--215
+\OT1/cmr/m/n/10 re-sult is a the-o-ret-i-cal pre-dic-tion of the av-er-age mag-
+ni-tude of the mag-netic field per-tur- 
  []
 
 
-Overfull \hbox (10.43237pt too wide) in paragraph at lines 213--214
-\OT1/cmr/m/n/10 func-tion of al-ti-tude (or dis-tance from elec-tro-jet cur-ren
-t sheet). The point is to quan-tify 
+Overfull \hbox (6.099pt too wide) in paragraph at lines 214--215
+\OT1/cmr/m/n/10 ba-tions as func-tion of al-ti-tude (or dis-tance from elec-tro
+-jet cur-rent sheet). The point is 
+ []
+
+
+Overfull \hbox (10.26558pt too wide) in paragraph at lines 216--217
+[]\OT1/cmr/m/n/10 Figures 1[] and 2[] show re-sults from when I did this cal-cu
+-la-tion ear-lier. I plan to re- 
+ []
+
+
+Overfull \hbox (6.90457pt too wide) in paragraph at lines 216--217
+\OT1/cmr/m/n/10 peat it now, and in-clude code and doc-u-men-ta-tion. The two f
+ig-ures will be merged into 
+ []
+
+
+Overfull \hbox (9.27954pt too wide) in paragraph at lines 216--217
+\OT1/cmr/m/n/10 one which will also con-tain a panel with the the []Gjerloev et
+ al.[], 2011) power spec-trum 
  []
 
 <figures/B_vs_h.png, id=17, 462.528pt x 346.896pt>
 File: figures/B_vs_h.png Graphic file (type png)
  <use figures/B_vs_h.png>
-Package pdftex.def Info: figures/B_vs_h.png used on input line 216.
+Package pdftex.def Info: figures/B_vs_h.png used on input line 219.
 (pdftex.def)             Requested size: 198.7425pt x 149.0565pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 217--217
+Underfull \hbox (badness 10000) in paragraph at lines 220--220
 []\OT1/cmr/bx/n/9 Figure  1. \OT1/cmr/m/n/9 Al-ti-tude vari-a-tion of $^^A\OML/
 cmm/m/it/9 B$\OT1/cmr/m/n/9 , as-sum-ing spa-tial struc-ture of elec-tro-jet is
  sim-i-lar to
@@ -466,31 +487,28 @@ File: figures/magnetic_field_structure_at_different_heights.png Graphic file (t
 ype png)
  <use figures/magnetic_field_structure_at_different_heights.png>
 Package pdftex.def Info: figures/magnetic_field_structure_at_different_heights.
-png used on input line 222.
+png used on input line 225.
 (pdftex.def)             Requested size: 198.7425pt x 186.01839pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 223--223
+Underfull \hbox (badness 10000) in paragraph at lines 226--226
 []\OT1/cmr/bx/n/9 Figure  2. \OT1/cmr/m/n/9 Con-tour plots of mag-netic field o
 f a ran-dom elec-tro-jet with sim-i-lar spa-tial struc-ture
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 223--223
+Underfull \hbox (badness 10000) in paragraph at lines 226--226
 \OT1/cmr/m/n/9 (spa-tial power spec-trum) as FACs, shown at 85 km and on ground
 . (prob-a-bly merge this fig-ure
  []
 
 
-Overfull \hbox (18.34148pt too wide) in paragraph at lines 227--227
+Overfull \hbox (18.34148pt too wide) in paragraph at lines 231--231
 []\OT1/cmr/bx/n/10.95 Resolving elec-tro-jet us-ing meso-spheric mag-netic fiel
 d mea-sure-ments  
  []
 
 
-Underfull \vbox (badness 1681) has occurred while \output is active []
-
- [2 <./figures/B_vs_h.png>]
-Overfull \hbox (14.43233pt too wide) in paragraph at lines 228--229
+Overfull \hbox (14.43233pt too wide) in paragraph at lines 232--233
 []\OT1/cmr/m/n/10 Point: Demon-strate / quan-tify in-creased ca-pa-bil-ity in d
 e-ter-min-ing elec-tro-jet struc- 
  []
@@ -499,160 +517,171 @@ e-ter-min-ing elec-tro-jet struc-
 
 pdfTeX warning: pdflatex (file ./figures/paper_outline.pdf): PDF inclusion: fou
 nd PDF version <1.7>, but at most version <1.5> allowed
-<figures/paper_outline.pdf, id=28, 1457.445pt x 1312.15219pt>
+<figures/paper_outline.pdf, id=20, 1457.445pt x 1312.15219pt>
 File: figures/paper_outline.pdf Graphic file (type pdf)
 
 <use figures/paper_outline.pdf>
-Package pdftex.def Info: figures/paper_outline.pdf used on input line 240.
+Package pdftex.def Info: figures/paper_outline.pdf used on input line 244.
 (pdftex.def)             Requested size: 198.7425pt x 178.91484pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 241--241
+Underfull \hbox (badness 10000) in paragraph at lines 245--245
 []\OT1/cmr/bx/n/9 Figure  3. \OT1/cmr/m/n/9 PRE-LIM-I-NARY FIG-URE: Schematic t
 o il-lus-trate what is done in this pa-per: Cal-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 241--241
+Underfull \hbox (badness 10000) in paragraph at lines 245--245
 \OT1/cmr/m/n/9 cu-late equiv-a-lent cur-rent based on re-al-is-tic mea-sure-men
 ts from EZIE, and com-pare the re-sult
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 241--241
+Underfull \hbox (badness 10000) in paragraph at lines 245--245
 \OT1/cmr/m/n/9 to 1) equiv-a-lent cur-rent cal-cu-lated from an ideal dis-tri-b
 u-tion of per-fect mea-sure-ments of $^^A[]$ at
  []
 
 
-Overfull \hbox (11.52957pt too wide) in paragraph at lines 246--247
+Overfull \hbox (11.52957pt too wide) in paragraph at lines 250--251
 []\OT1/cmr/m/n/10 Description of mis-sion: Grid, time res-o-lu-tion, pre-ci-sio
 n (ba-si-cally go-ing from spec- 
  []
 
 
-Overfull \hbox (8.87674pt too wide) in paragraph at lines 253--253
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [2]
+[3 <./figures/B_vs_h.png> <./figures/magnetic_field_structure_at_different_heig
+hts.png>]
+Overfull \hbox (8.87674pt too wide) in paragraph at lines 257--257
 []\OT1/cmr/m/n/10 Description of the sim-u-lated data: How is the (per-fect) MH
 D out-put used to pro- 
  []
 
 
-Overfull \hbox (14.12668pt too wide) in paragraph at lines 253--253
+Overfull \hbox (14.12668pt too wide) in paragraph at lines 257--257
 \OT1/cmr/m/n/10 duce mea-sure-ments on grid with noise / un-cer-tainty etc. Muc
 h of this is cov-ered in []Yee 
  []
 
 
-Overfull \hbox (8.75604pt too wide) in paragraph at lines 255--256
+Overfull \hbox (8.75604pt too wide) in paragraph at lines 259--260
 []\OT1/cmr/m/n/10 Description of ideal fig-ures ($[][]$ and $[][]$): $[][]$ is 
 the equiv-a-lent curent at 110 
  []
 
 
-Overfull \hbox (1.54353pt too wide) in paragraph at lines 255--256
+Overfull \hbox (1.54353pt too wide) in paragraph at lines 259--260
 \OT1/cmr/m/n/10 (?) km al-ti-tude cal-cu-lated with per-fect knowl-edge about t
 he mag-netic field at 85 km. 
  []
 
 
-Overfull \hbox (23.54999pt too wide) in paragraph at lines 255--256
-\OT1/cmr/m/n/10 What we would get if we had no noise, and per-fect spa-tial cov
--er-age. $[][]$ is the divergence- 
+Overfull \hbox (1.13327pt too wide) in paragraph at lines 259--260
+\OT1/cmr/m/n/10 This is what we would get if we had no noise, and per-fect spa-
+tial cov-er-age. $[][]$ is the 
  []
 
 
-Overfull \hbox (3.83362pt too wide) in paragraph at lines 255--256
-\OT1/cmr/m/n/10 free part of the hor-i-zon-tal cur-rent. $[][]$ and $[][]$ are 
-ex-pected to be very sim-i-lar, but 
+Overfull \hbox (20.50026pt too wide) in paragraph at lines 259--260
+\OT1/cmr/m/n/10 divergence-free part of the hor-i-zon-tal cur-rent. $[][]$ and 
+$[][]$ are ex-pected to be very sim- 
  []
 
 
-Overfull \hbox (6.35478pt too wide) in paragraph at lines 255--256
-\OT1/cmr/m/n/10 not ex-actly: $[][]$ does not have spa-tial struc-tures $\OML/c
-mm/m/it/10 <$ \OT1/cmr/m/n/10 dis-tance to elec-tro-jet, and it has 
+Overfull \hbox (17.43816pt too wide) in paragraph at lines 259--260
+\OT1/cmr/m/n/10 i-lar, but not ex-actly: $[][]$ does not have spa-tial struc-tu
+res $\OML/cmm/m/it/10 <$ \OT1/cmr/m/n/10 dis-tance to elec-tro-jet, and 
  []
 
 
-Overfull \hbox (9.30005pt too wide) in paragraph at lines 255--256
-\OT1/cmr/m/n/10 con-tri-bu-tions from mag-ne-to-spheric cur-rents. $[][]$ has a
-ll spa-tial scales of the MHD sim- 
+Overfull \hbox (15.41118pt too wide) in paragraph at lines 259--260
+\OT1/cmr/m/n/10 it has con-tri-bu-tions from mag-ne-to-spheric cur-rents. $[][]
+$ has all spa-tial scales of the MHD 
  []
 
-[3 <./figures/magnetic_field_structure_at_different_heights.png>]
-Overfull \hbox (7.1545pt too wide) in paragraph at lines 259--260
+
+Overfull \hbox (7.1545pt too wide) in paragraph at lines 263--264
 []\OT1/cmr/m/n/10 Description of al-go-rithm - this is the main sec-tion of the
  pa-per de-scrib-ing the de- 
  []
 
 
-Overfull \hbox (12.40456pt too wide) in paragraph at lines 261--262
+Overfull \hbox (12.40456pt too wide) in paragraph at lines 265--266
 []\OT1/cmr/m/n/10 Input: Mag-netic field at 85 km on a grid - de-fined by satel
 -lite or-bit, 4 view-ing di- 
  []
 
 
-Overfull \hbox (6.1268pt too wide) in paragraph at lines 261--262
+Overfull \hbox (6.1268pt too wide) in paragraph at lines 265--266
 \OT1/cmr/m/n/10 rec-tions, and sam-pling fre-quency/integration time. Three mag
 -netic field com-po- 
  []
 
 
-Overfull \hbox (0.87659pt too wide) in paragraph at lines 261--262
+Overfull \hbox (0.87659pt too wide) in paragraph at lines 265--266
 \OT1/cmr/m/n/10 nents with dif-fer-ent er-rors ev-ery di-rec-tion - and cor-re-
 lated er-rors so we can not 
  []
 
 
-Overfull \hbox (32.68225pt too wide) in paragraph at lines 262--263
+Overfull \hbox (32.68225pt too wide) in paragraph at lines 266--267
 []\OT1/cmr/m/n/10 Technique: Place divergence-free spher-i-cal el-e-men-tary cu
 r-rent sys-tems (SECS) []Amm, 
  []
 
 
-Overfull \hbox (15.96027pt too wide) in paragraph at lines 262--263
+Overfull \hbox (15.96027pt too wide) in paragraph at lines 266--267
 \OT1/cmr/m/n/10 1997; Van-hamaki & Ju-u-sola, 2020) on a grid (de-tails tbd) an
 d find the am-pli-tudes 
  []
 
 
-Overfull \hbox (9.54343pt too wide) in paragraph at lines 262--263
+Overfull \hbox (9.54343pt too wide) in paragraph at lines 266--267
 \OT1/cmr/m/n/10 that fit the mea-sure-ments. Sev-eral MHD model snap-shots shou
 ld be used to find 
  []
 
 
-Overfull \hbox (19.32118pt too wide) in paragraph at lines 263--264
+Underfull \vbox (badness 6300) has occurred while \output is active []
+
+ [4 <./figures/paper_outline.pdf>]
+Overfull \hbox (19.32118pt too wide) in paragraph at lines 267--268
 []\OT1/cmr/m/n/10 With known divergence-free SECS am-pli-tudes, plot the di-ver
 -gence free cur-rent and 
  []
 
 
-Overfull \hbox (1.93224pt too wide) in paragraph at lines 272--272
+Overfull \hbox (22.9324pt too wide) in paragraph at lines 274--275
+[]\OT1/cmr/m/n/10 Summary and dis-cus-sion of as-sump-tions and im-pli-ca-tions
+. Be-low are some sug-gested 
+ []
+
+
+Overfull \hbox (1.93224pt too wide) in paragraph at lines 276--276
 []\OT1/cmr/m/n/10 Can we merge/combine the in-ver-sions: In-stead of spec-trum 
 $\OMS/cmsy/m/n/10 !$ \OT1/cmr/m/n/10 mag-netic field $\OMS/cmsy/m/n/10 !$ 
  []
 
 
-Overfull \hbox (3.68224pt too wide) in paragraph at lines 275--276
+Overfull \hbox (3.68224pt too wide) in paragraph at lines 279--280
 []\OT1/cmr/m/n/10 There is an un-cer-tainty in the lo-ca-tion of the mea-sure-m
 ents (where the emis-sion 
  []
 
 
-Overfull \hbox (8.07121pt too wide) in paragraph at lines 275--276
+Overfull \hbox (8.07121pt too wide) in paragraph at lines 279--280
 \OT1/cmr/m/n/10 comes from). What is the cor-re-spond-ing un-cer-tainty in elec
 -tro-jet es-ti-mate? This prob- 
  []
 
 
-Overfull \hbox (14.07117pt too wide) in paragraph at lines 277--278
+Overfull \hbox (14.07117pt too wide) in paragraph at lines 281--282
 []\OT1/cmr/m/n/10 In this pa-per we work with snap-shots of MHD model. What are
  the ef-fects of time 
  []
 
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [4 <./figures/paper_outline.pdf>] (./inversion_paper.bbl
+(./inversion_paper.bbl
 Underfull \hbox (badness 10000) in paragraph at lines 38--57
 []\OT1/cmr/m/n/10 Gjerloev, J. W., Ohtani, S., Iijima, T., An-der-son, B., Slav
 in, J., & Le, G.  (2011). 
@@ -694,15 +723,18 @@ Underfull \hbox (badness 10000) in paragraph at lines 134--149
 LaTeX Font Warning: Size substitutions with differences
 (Font)              up to 0.45pt have occurred.
 
+
+LaTeX Warning: There were undefined references.
+
  ) 
 Here is how much of TeX's memory you used:
- 3944 strings out of 492995
- 53230 string characters out of 6132703
- 129047 words of memory out of 5000000
- 7417 multiletter control sequences out of 15000+600000
+ 3947 strings out of 492995
+ 53254 string characters out of 6132703
+ 131055 words of memory out of 5000000
+ 7420 multiletter control sequences out of 15000+600000
  10804 words of font info for 39 fonts, out of 8000000 for 9000
  1147 hyphenation exceptions out of 8191
- 43i,8n,37p,828b,316s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 43i,8n,37p,834b,325s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/local/texlive/2017/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb
 ></usr/local/texlive/2017/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb>
 </usr/local/texlive/2017/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx9.pfb></
@@ -720,7 +752,7 @@ ve/2017/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/local/texlive/
 texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/local/texlive/2017/t
 exmf-dist/fonts/type1/public/amsfonts/cm/cmti9.pfb></usr/local/texlive/2017/tex
 mf-dist/fonts/type1/public/amsfonts/cm/cmtt9.pfb>
-Output written on inversion_paper.pdf (5 pages, 406101 bytes).
+Output written on inversion_paper.pdf (5 pages, 406164 bytes).
 PDF statistics:
  129 PDF objects out of 1000 (max. 8388607)
  86 compressed objects within 1 object stream
