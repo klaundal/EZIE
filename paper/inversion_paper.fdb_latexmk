@@ -1,12 +1,12 @@
 # Fdb version 3
-["bibtex inversion_paper"] 1578826920 "inversion_paper.aux" "inversion_paper.bbl" "inversion_paper" 1578827112
+["bibtex inversion_paper"] 1578826920 "inversion_paper.aux" "inversion_paper.bbl" "inversion_paper" 1578850133
   "/usr/local/texlive/2017/texmf-dist/bibtex/bst/apacite/apacite.bst" 1480098433 141073 9d7b79dbf9d91133318126032cff8c27 ""
   "bibdata.bib" 1578826172 2029 c79ea613e40b76cb1520404634f54402 ""
   "inversion_paper.aux" 1578827111 2319 39e055d411ab76b528fa066bb626e015 ""
   (generated)
-  "inversion_paper.bbl"
   "inversion_paper.blg"
-["pdflatex"] 1578827111 "inversion_paper.tex" "inversion_paper.pdf" "inversion_paper" 1578827112
+  "inversion_paper.bbl"
+["pdflatex"] 1578827111 "inversion_paper.tex" "inversion_paper.pdf" "inversion_paper" 1578850133
   "/usr/local/texlive/2017/texmf-dist/fonts/map/fontname/texfonts.map" 1480098670 3287 e6b82fe08f5336d4d5ebc73fb1152e87 ""
   "/usr/local/texlive/2017/texmf-dist/fonts/tfm/jknappen/ec/ectt1000.tfm" 1480098696 1536 06717a2b50de47d4087ac0e6cd759455 ""
   "/usr/local/texlive/2017/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1480098698 1004 54797486969f23fa377b128694d548df ""
@@ -98,6 +98,6 @@
   "inversion_paper.tex" 1578827111 22860 e9de7f5a5ea07221a703f3a618ce678f ""
   "trackchanges.sty" 1577979013 26287 09689e5e9db973d136f0537b8570fadf ""
   (generated)
-  "inversion_paper.aux"
-  "inversion_paper.log"
   "inversion_paper.pdf"
+  "inversion_paper.log"
+  "inversion_paper.aux"
