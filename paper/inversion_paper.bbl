@@ -1,6 +1,30 @@
 \begin{thebibliography}{}
 
 \bibitem [\protect \citeauthoryear {%
+Amm%
+}{%
+Amm%
+}{%
+{\protect \APACyear {1997}}%
+}]{%
+Amm97}
+\APACinsertmetastar {%
+Amm97}%
+\begin{APACrefauthors}%
+Amm, O.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{1997}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Ionospheric elementary current systems in spherical
+  coordinates and their application} {Ionospheric elementary current systems in
+  spherical coordinates and their application}.{\BBCQ}
+\newblock
+\APACjournalVolNumPages{J. Geomag. Geoelectr.}{}{}{947-955}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
 Gjerloev%
 \ \protect \BOthers {.}}{%
 Gjerloev%
@@ -61,6 +85,37 @@ Kane, T\BPBI J.%
   Physics}{123}{8}{6171-6188}.
 \newblock
 \begin{APACrefDOI} \doi{10.1029/2018JA025178} \end{APACrefDOI}
+\PrintBackRefs{\CurrentBib}
+
+\bibitem [\protect \citeauthoryear {%
+Vanhamaki%
+\ \BBA {} Juusola%
+}{%
+Vanhamaki%
+\ \BBA {} Juusola%
+}{%
+{\protect \APACyear {2020}}%
+}]{%
+vanhamaki20}
+\APACinsertmetastar {%
+vanhamaki20}%
+\begin{APACrefauthors}%
+Vanhamaki, H.%
+\BCBT {}\ \BBA {} Juusola, L.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2020}{}{}.
+\newblock
+{\BBOQ}\APACrefatitle {Introduction to Spherical Elementary Current Systems}
+  {Introduction to spherical elementary current systems}.{\BBCQ}
+\newblock
+\BIn{} \APACrefbtitle {Ionospheric Multi-Spacecraft Analysis Tools}
+  {Ionospheric multi-spacecraft analysis tools}\ (\BPGS\ 5--33).
+\newblock
+\APACaddressPublisher{}{ISSI Scientific Report Series 17}.
+\newblock
+\begin{APACrefDOI} \doi{10.1007/978-3-030-26732-2_2} \end{APACrefDOI}
 \PrintBackRefs{\CurrentBib}
 
 \bibitem [\protect \citeauthoryear {%

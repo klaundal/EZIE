@@ -164,7 +164,10 @@
 %% \begin{abstract} starts the second page
 
 \begin{abstract}
-[ enter your Abstract here ]
+Suggested EGU abstract: \newline
+The auroral electrojet is traditionally measured remotely with magnetometers on ground or in low Earth orbit. The long distance, more than 100 km, means that smaller scale sizes are not detected. Because of this, the spatiotemporal characteristics of the electrojet are not known. Recent advances in measurement technology give hope of remote detections of the magnetic field in the mesosphere, very close to the electrojet. We present a prediction of the magnitude of these disturbances, inferred from the spatiotemporal characteristics of magnetic field-aligned currents. We also discuss how a constellation of small satellites carrying the Microwave Electrojet Magnetogram (MEM) instrument (Yee et al., 2020), could be used to essentially image the equivalent current at unprecedented spatial resolution. 
+
+
 \end{abstract}
 
 \section*{Plain Language Summary}
@@ -202,27 +205,36 @@
 
 
 \section{Introduction}
-Electrojet traditionally measured from ground + later satellites. Drawback: Distance $>$ 100~km, which removes fine scale structures. $\Rightarrow$ electrojet spatial structure is not known
+Electrojet traditionally measured from ground + later satellites. Disadvantage: Distance $>$ 100~km, which removes fine scale structures. $\Rightarrow$ electrojet spatial structure is not known
 
-New techniques available (EZIE \cite{Yee20}+ maybe sodium laser measurements \cite{Kane18} ) 
-
+New techniques available (EZIE \cite{Yee20}+ maybe sodium laser measurements \cite{Kane18} ), which offer the potential to distinguish between different fine-scale structures in the electrojet. 
 
 \subsection{Prediction of mesospheric magnetic field disturbance magnitudes}
-Use \cite{Gjerloev11} FAC-based spectrum to make synthetic equivalent current that has the same magnetic power spectrum. Use standard radial dependence to calculate structure and magnitude of magnetic field below ionosphere. The point is to quantify the added benefit of measuring at 85 km compared to ground.
+Use \cite{Gjerloev11} FAC-based spectrum to make synthetic equivalent current that has the same magnetic power spectrum. Use standard radial dependence to calculate structure and magnitude of magnetic field below ionosphere. The result is a theoretical prediction of the average magnitude of the magnetic field perturbations as function of altitude (or distance from electrojet current sheet). The point is to quantify the added benefit of measuring at 85 km compared to ground. 
 
 \begin{figure}
 \includegraphics[width=.5\linewidth]{figures/B_vs_h.png}
 \caption{Altitude variation of $\Delta B$, assuming spatial structure of electrojet is similar to field-aligned currents. Normalized to 100~nT on ground.}
+\label{fig:b_vs_h}
 \end{figure}
 
 \begin{figure}
 \includegraphics[width=.5\linewidth]{figures/magnetic_field_structure_at_different_heights.png}
-\caption{Contour plots of magnetic field of a random electrojet with similar spatial structure (spatial power spectrum) as FACs, shown at 85~km and on ground. }
+\caption{Contour plots of magnetic field of a random electrojet with similar spatial structure (spatial power spectrum) as FACs, shown at 85~km and on ground. (probably merge this figure with fig \ref{fig:b_vs_h} - and add panel with \cite{Gjerloev11} power spectrum). }
 \end{figure}
 
 
 \section{Resolving electrojet using mesospheric magnetic field measurements}
 Point: Demonstrate / quantify increased capability in determining electrojet structure with meospheric measurements compared to ground
+
+
+
+Subsections:
+\begin{enumerate}
+\item EZIE mission concept
+\item Test simulation
+\item Electrojet inversion
+\end{enumerate}
 
 \begin{figure}
 \includegraphics[width=.5\linewidth]{figures/paper_outline.pdf}
@@ -236,21 +248,34 @@ Description of mission: Grid, time resolution, precision (basically going from s
 Limitations of look direction
 
 \subsection{Test simulation}
-Description and plots of MHD simultaion case
+Description and plots of MHD simulation and snapshot(s) that we will use. \vskip1ex
 
-Discussion about divergence-free current - what would we get with PERFECT data immediately under current layer?
+Description of the simulated data: How is the (perfect) MHD output used to produce measurements on grid with noise / uncertainty etc. Much of this is covered in \cite{Yee20}\vskip1ex
+
+Description of ideal figures ($\pmb J_{eq}^{ideal}$ and $\pmb J^{df}_{H}$): $\pmb J_{eq}^{ideal}$ is the equivalent curent at 110 (?) km altitude calculated with perfect knowledge about the magnetic field at 85 km. What we would get if we had no noise, and perfect spatial coverage. $\pmb J^{df}_{H}$ is the divergence-free part of the horizontal current. $\pmb J_{eq}^{ideal}$ and $\pmb J^{df}_{H}$ are expected to be very similar, but not exactly: $\pmb J_{eq}^{ideal}$ does not have spatial structures $<$ distance to electrojet, and it has contributions from magnetospheric currents. $\pmb J^{df}_{H}$ has all spatial scales of the MHD simulation, and no contribution from magnetosphere. 
 
 
 \subsection{Electrojet inversion}
-Description of algorithm
-
-Presentation of results - in comparison to results 
+Description of algorithm - this is the main section of the paper describing the details of the inversion. Rough description:
+\begin{itemize}
+\item Input: Magnetic field at 85~km on a grid - defined by satellite orbit, 4 viewing directions, and sampling frequency/integration time. Three magnetic field components with different errors every direction - and correlated errors so we can not use least squares techniques directly
+\item Technique: Place divergence-free spherical elementary current systems (SECS) \cite{Amm97,vanhamaki20} on a grid (details tbd) and find the amplitudes that fit the measurements. Several MHD model snapshots should be used to find an optimal grid + regularization parameters.  
+\item With known divergence-free SECS amplitudes, plot the divergence free current and compare to the ideal currents discussed above
+\end{itemize}
 
 
 
 
 \section{Discussion}
+
 \subsection{Effect of weighted volume emission  }
+Can we merge/combine the inversions: Instead of spectrum $\rightarrow$ magnetic field $\rightarrow$ equivalent current, we do spectrum $\rightarrow$ equivalent current.\vskip1ex
+use probabilistic inversion methods?
+\subsection{Effect of uncertainties in measurement location }
+There is an uncertainty in the location of the measurements (where the emission comes from). What is the corresponding uncertainty in electrojet estimate? This probably requires different inversion methods. (related to previous subsection... )
+\subsection{Effect of temporal variations }
+In this paper we work with snapshots of MHD model. What are the effects of time variations? 
+
 
 
 %Text here ===>>>
