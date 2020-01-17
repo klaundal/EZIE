@@ -211,21 +211,32 @@ Electrojet traditionally measured from ground + later satellites. Disadvantage: 
 New techniques available (EZIE \cite{Yee20}+ maybe sodium laser measurements \cite{Kane18} ), which offer the potential to distinguish between different fine-scale structures in the electrojet. 
 
 \subsection{Prediction of mesospheric magnetic field disturbance magnitudes}
-Use \cite{Gjerloev11} FAC-based spectrum to make synthetic equivalent current that has the same magnetic field spatial power spectrum. Use standard radial dependence to calculate structure and magnitude of magnetic field below ionosphere. The result is a theoretical prediction of the average magnitude of the magnetic field perturbations as function of altitude (or distance from electrojet current sheet). The point is to quantify the added benefit of measuring at 85 km compared to ground. 
+Since the mesosphere is resistive and presumably free of electric current, it is expected that magnetic field disturbances there are sensitive to the same part of the ionospheric electric current system as is observed from ground. In polar regions, where the main magnetic field is nearly vertical, this is primarily the divergence-free part of the horizontal ionospheric current \cite{Fukushima76,Untiedt93,Laundal15}, since the contributions from field-aligned currents and their curl-free horizontal closure currents cancel. 
 
-Figures \ref{fig:b_vs_h} and \ref{fig:maps} show results from when I did this calculation earlier. I plan to repeat it now, and include code and documentation. The two figures will be merged into one which will also contain a panel with the the \cite{Gjerloev11} power spectrum which is used in the calculation. 
-
-\begin{figure}
-\includegraphics[width=.5\linewidth]{figures/B_vs_h.png}
-\caption{Altitude variation of $\Delta B$, assuming spatial structure of electrojet is similar to field-aligned currents. Normalized to 100~nT on ground.}
-\label{fig:b_vs_h}
-\end{figure}
+The current associated with magnetic field perturbations below the ionosphere are often modeled as a so-called equivalent current \cite{Kamide81}, an electric sheet current density on a spherical shell at some fixed altitude, which can account for the observed magnetic field. In this paper, we use the term electrojet synonymously with the equivalent current. The variation in magnetic field strength as function of distance from the electrojet depends on scale size; large-scale currents are seen at greater distances than small-scale currents. Mesospheric magnetic field measurements will therefore enable us to resolve smaller spatial scales than ground measurements. The purpose of this section is to quantify the height variation of the magnetic field disturbances, based on what we already know about the spatial structure of ionospheric currents. 
 
 \begin{figure}
-\includegraphics[width=.5\linewidth]{figures/magnetic_field_structure_at_different_heights.png}
-\caption{Contour plots of magnetic field of a random electrojet with similar spatial structure (spatial power spectrum) as FACs, shown at 85~km and on ground. (probably merge this figure with fig \ref{fig:b_vs_h} - and add panel with \cite{Gjerloev11} power spectrum). }
-\label{fig:maps}
+\includegraphics[width=\linewidth]{figures/radial_dependence.pdf}
+\caption{B) Altitude variation of $\Delta B$, assuming spatial structure of electrojet is similar to field-aligned currents. Normalized to 100~nT on ground. C)Contour plots of magnetic field of a random electrojet with similar spatial structure (spatial power spectrum) as FACs, shown at 85~km and on ground. }
+\label{fig:radial_dependence}
 \end{figure}
+
+The key assumption that we use is that the spatial power spectrum of the electrojet is proportional with the spatial power spectrum of the field-aligned electric currents. In contrast to the electrojet power spectrum, empirical estimates of the FAC spatial power spectrum are available. Figure \ref{fig:radial_dependence}A shows the spatial power spectrum of the magnetic field associated with FACs, in bold black, from \cite{Gjerloev11}, who used satellite magnetometers on the three ST-5 satellites, which flew in a pearl-on-a-string configuration in polar low Earth orbit. Since this orbit intersects the FACs, the determination of small spatial scales is not restricted by distance, as for the electrojet. This particular spatial power spectrum is valid for nightside during disturbed conditions (AL index $<-100$~nT). The spectrum is close to linear on a log-log scale, and we use this property to extrapolate to scale sizes which are longer than those considered by \cite{Gjerloev11}. The fitted and extrapolated curve is shown in gray. 
+
+The curves in Figure \ref{fig:radial_dependence}A, which represents the average magnitude of FAC magnetic field disturbances as function of scale size, is now assumed to also describe the spatial scale of the electrojet at zero distance from the current sheet. With this assumption, we can derive the radial variation of the magnetic field using results from spherical harmonic analysis. Equation 118 of \cite{Sabaka10} describes the squared magnetic field, averaged over a sphere at radius $r \le R$, where $R$ is the current sheet radius, as follows
+\begin{equation}
+\langle \mathbf{B}(r)^2\rangle = \sum_{n=1}^\infty n\left(\frac{r}{a}\right)^{2n-2}\sum_{m=0}^{n}[(q_n^m)^2 + (s_n^m)^2] = \sum_{n=1}^\infty n\left(\frac{r}{a}\right)^{2n-2}A_n. \label{eq:spectrum}
+\end{equation}
+$n$ and $m$ are spherical harmonic degree and order, respectively; $a=6371.2$~km is a reference radius; and $q_n^m$ and $s_n^m$ are spherical harmonic coefficients. On the right hand side, the sum over spherical harmonic order $m$ is written as $A_n$. The terms in the sum represent the extent to which each degree $n$ contributes to the squared magnitude of the magnetic field. 
+
+We assume that the curves in Figure \ref{fig:radial_dependence}A represent the square root of this quantity, at $r=R$. The scale size $L$ and spherical harmonic degree $n$ are related by $\pi R_{FAC}/L$, where $R_{FAC}$ is the radius at which the power spectrum of Figure \ref{fig:radial_dependence}A was evaluated by \cite{Gjerloev11}. They mapped their measurements to 200~km altitude. This allows us to solve for $A_n$, and thus calculate the squared magnetic field magnitude, averaged over the sphere, as function of radius $r$ using equation (\ref{eq:spectrum}). The square root of this is shown in Figure \ref{fig:radial_dependence}B. The thick black line is based only on the part of the spatial power spectrum that \cite{Gjerloev11} measured, and the grey line is based on an extrapolation to include scale sizes up to spherical harmonic degree $n=10$. It is clear that when larger scale sizes are included, the radial variation is less dramatic. The current sheet layer was placed at 105~km. Both curves are normalized such that the magnetic field perturbation on ground is 100~nT. The two curves show about $50\%$ and $90\%$ increases from ground to 85~km. 
+
+Figure \ref{fig:radial_dependence}C shows contour plots of the magnetic field magnitude at 0~km and at 85~km, for an equivalent current whose magnetic field has the same power spectrum as used with the grey line in Figure \ref{fig:radial_dependence}B. This is done by assigning random spherical harmonic coefficients $q_n^0$ and $s_n^0$ which obey $(q_n^0)^2 + (s_n^0)^2 = A_n$. Longitudinal variations ($m>0$) are ignored. The figure is not meant to show a realistic magnetic field, but rather to visualize the difference in spatial structure in the magnetic field disturbances at ground and in the mesosphere. 
+
+
+
+
+
 
 
 \section{Resolving electrojet using mesospheric magnetic field measurements}
