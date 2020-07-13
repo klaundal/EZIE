@@ -106,7 +106,6 @@ Wn = np.hstack((Wen, Wnn, Wnu))
 Wu = np.hstack((Weu, Wnu, Wuu))
 W  = np.vstack((We, Wn, Wu))
 Q  = np.linalg.inv(W)
-Q  = Q / np.abs(Q).max()
 
 
 Ge, Gn, Gu = get_SECS_B_G_matrices(obs['lat'], obs['lon'], np.ones_like(obs['lat']) * (6371.2 + OBSHEIGHT) * 1e3, 
@@ -115,13 +114,16 @@ Ge, Gn, Gu = get_SECS_B_G_matrices(obs['lat'], obs['lon'], np.ones_like(obs['lat
 G = np.vstack((Ge, Gn, Gu))
 d = np.hstack((obs['Be'], obs['Bn'], obs['Bu']))
 
-
 GTQG = G.T.dot(Q).dot(G)
 GTQd = G.T.dot(Q).dot(d)
-S = np.max(GTQG)
-#R = np.eye(GTQG.shape[0]) * S*1e-1 + LL / np.abs(LL).max() * S * 1e1
-R = np.eye(GTQG.shape[0]) * S*1e-1 + LL / np.abs(LL).max() * S * 1e0
-m = np.linalg.lstsq(GTQG + R, GTQd, rcond = 0)[0]
+scale = np.max(GTQG)
+R = np.eye(GTQG.shape[0]) * scale*1e-1 + LL / np.abs(LL).max() * scale * 1e0 
+
+SS = np.linalg.inv(GTQG + R).dot(G.T.dot(Q))
+m = SS.dot(d)
+
+#V_m = SS.dot(W).dot(SS.T) # model covariance
+#RR = np.linalg.inv(GTQG + R).dot(GTQG + R) # model resolution matrix
 
 
 fig = plt.figure(figsize = (6, 17))
@@ -250,8 +252,8 @@ for ax in [axe_secs, axe_true, axn_secs, axn_true, axr_secs, axr_true]:
 
 plt.subplots_adjust(bottom = .05, top = .99, left = .01, right = .99)
 
-plt.savefig('./figures/inveresion_example_proposal.png', dpi = 250)
-plt.savefig('./figures/inveresion_example_proposal.pdf')
+#plt.savefig('./figures/inveresion_example_proposal.png', dpi = 250)
+#plt.savefig('./figures/inveresion_example_proposal.pdf')
 
 
 plt.show()
