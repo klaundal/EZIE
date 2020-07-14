@@ -4,7 +4,7 @@ from scipy.interpolate import RectSphereBivariateSpline
 
 d2r = np.pi / 180
 
-def get_MHD_dB(lat, lon, component = 'Br [nT]', fn = '../data/gamera_dBs_Jfull_85km_2430'):
+def get_MHD_dB(lat, lon, component = 'Br [nT]', fn = '../data/gamera_dBs_Jfull_80km_2430'):
     """
     """
     lon = (lon) % 360
@@ -31,7 +31,7 @@ def get_MHD_dB(lat, lon, component = 'Br [nT]', fn = '../data/gamera_dBs_Jfull_8
     return getB(lat * d2r, lon * d2r)
 
 
-def get_MHD_jeq(lat, lon, fn = '../data/Jequiv'):
+def get_MHD_jeq(lat, lon, fn = './mhd_data/Jequiv'):
     """
 
     """
