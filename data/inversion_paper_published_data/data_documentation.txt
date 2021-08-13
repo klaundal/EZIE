@@ -1,0 +1,38 @@
+sigmaH.2430.mix.reduced.h5
+--------------------------
+MHD simulation output in HDF5 format.
+
+The HDF5 file is provided along with a metadata description in the XMF format. The latter can be opened in scientific visualization software such as Paraview and Visit.
+
+The file contains the following 2D arrays:
+
+X, Y are Cartesian coordinates of the grid corners in the SM frame in the units of ionospheric radius (assumed to be 6500 km).
+
+Under the group Step#0 variables are given at cell-centers of the above grid for the Northern hemisphere:
+"Field-aligned current NORTH": Field-aligned current density [microA/m^2]
+"Hall conductance NORTH": Hall conductance [S]
+"Pedersen conductance NORTH": Pedersen conductance [S]
+"Potential NORTH": Electrostatic potential [kV]
+
+
+electrojet_inversion_data.csv
+-----------------------------
+The columns include:
+seconds: seconds since start of interval (4 min total)
+sat_lat: latitude of satellite
+sat_lon: longitude of satellite
+
+The other columns end with _1, _2, _3, or _4, corresponding to the four look directions. The first part of the columns names are:
+lat: latitude of measurement (at 80 km altitude)
+lon: longitude of measurement (at 80 km altitude)
+dbe: eastward component disturbance magnetic field [nT] (MHD output)
+dbn: northward component disturbance magnetic field [nT] (MHD output)
+dbu: upward component disturbance magnetic field [nT] (MHD output)
+dbe_measured: simulated mesurement of eastward component disturbance magnetic field [nT], including noise
+dbn_measured: simulated mesurement of northward component disturbance magnetic field [nT], including noise
+dbu_measured: simulated mesurement of upward component disturbance magnetic field [nT], including noise
+cov_ee, cov_en, cov_eu, cov_nn, cov_nu, cov_uu: elements of data covariance matrix corresponding to east (e), north (n) and (up) directions
+
+NOTE: The full MHD output provided in separate file must be rotated counterclockwise by 210 degrees to line up with the data in this file. 
+
+

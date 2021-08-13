@@ -1,0 +1,27 @@
+<?xml version="1.0" ?>
+<Xdmf Version="2.0">
+    <Domain>
+        <Grid CollectionType="Temporal" GridType="Collection" Name="tMesh">
+            <Grid GridType="Uniform" Name="gMesh">
+                <Topology NumberOfElements="90 721" TopologyType="2DSMesh"/>
+                <Geometry GeometryType="X_Y">
+                    <DataItem Dimensions="90 721" Format="HDF" NumberType="Float" Precision="4">sigmaH.2430.mix.reduced.h5:/X</DataItem>
+                    <DataItem Dimensions="90 721" Format="HDF" NumberType="Float" Precision="4">sigmaH.2430.mix.reduced.h5:/Y</DataItem>
+                </Geometry>
+                <Time Value="0.000000"/>
+                <Attribute AttributeType="Scalar" Center="Cell" Name="Field-aligned current NORTH">
+                    <DataItem Dimensions="89 720" Format="HDF" NumberType="Float" Precision="4">sigmaH.2430.mix.reduced.h5:/Step#0/Field-aligned current NORTH</DataItem>
+                </Attribute>
+                <Attribute AttributeType="Scalar" Center="Cell" Name="Hall conductance NORTH">
+                    <DataItem Dimensions="89 720" Format="HDF" NumberType="Float" Precision="4">sigmaH.2430.mix.reduced.h5:/Step#0/Hall conductance NORTH</DataItem>
+                </Attribute>
+                <Attribute AttributeType="Scalar" Center="Cell" Name="Pedersen conductance NORTH">
+                    <DataItem Dimensions="89 720" Format="HDF" NumberType="Float" Precision="4">sigmaH.2430.mix.reduced.h5:/Step#0/Pedersen conductance NORTH</DataItem>
+                </Attribute>
+                <Attribute AttributeType="Scalar" Center="Cell" Name="Potential NORTH">
+                    <DataItem Dimensions="89 720" Format="HDF" NumberType="Float" Precision="4">sigmaH.2430.mix.reduced.h5:/Step#0/Potential NORTH</DataItem>
+                </Attribute>
+            </Grid>
+        </Grid>
+    </Domain>
+</Xdmf>
