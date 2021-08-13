@@ -1,11 +1,25 @@
+""" This script is an early proof of concept demo, pre cubedsphere  / secsy module*. 
+
+As far as I can tell / remember, this was the basic idea:
+Make a CS grid, and define tracks in CS coordinates relative to the center satellite track. Calculate the 
+corresponding spherical coordinates and sample from Slava's MHD model output at 85 km. 
+The next step is to add Gaussian noise, and use as synthetic data in an inversion. 
+
+To get the script to run, I now import the SECS functions from secsy, but originally this was not done
+
+I keep the script here just in case there are ideas that are useful in future experiments
+
+Written some time in 2019, and updated in August 2021, by Kalle
+"""
+
 from spacepy import pycdf
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from EZIE.secs import get_SECS_B_G_matrices, get_SECS_J_G_matrices
-from EZIE.utils.polarsubplot import Polarsubplot
-from EZIE.utils.coords import sph_to_sph, car_to_sph
-from EZIE.utils.sunlight import subsol
+from secsy import get_SECS_B_G_matrices, get_SECS_J_G_matrices
+from polarsubplot import Polarsubplot
+from coords import sph_to_sph, car_to_sph
+from sunlight import subsol
 from scipy.interpolate import RectSphereBivariateSpline, griddata
 from scipy.spatial.distance import cdist
 
@@ -347,7 +361,7 @@ data_lt  = np.hstack([oax.tracks[key]['lt']   for key in oax.tracks.keys()])
 
 
 # make design matrix
-Ge, Gn, Gu = get_SECS_B_G_matrices(data_lat, data_lt, secs_lat, secs_lt, (6371.2 + DETECTION_HEIGHT) * 1e3, RI = (6371.2 + 130.) * 1e3)
+Ge, Gn, Gu = get_SECS_B_G_matrices(data_lat, data_lt*15, (6371.2 + DETECTION_HEIGHT) * 1e3, secs_lat, secs_lt*15, RI = (6371.2 + 130.) * 1e3)
 if COMPONENTWIZE:
     data = np.hstack((datae, datan, datau))
     G = np.vstack((Ge, Gn, Gu))
@@ -368,7 +382,7 @@ m = np.linalg.lstsq(gtg + np.identity(gtg.shape[0]) * LAMBDA, gtd, rcond = .0)[0
 xv, yv = np.meshgrid(vector_spacing_x, np.r_[oax.ax.get_ylim()[0]:oax.ax.get_ylim()[1]:VECTOR_SPACE])
 satlat, satlon = ll2xy(xv, yv, inverse = True)
 geolat, geolon = oax.sat_to_g(satlat, satlon)
-Gje, Gjn = get_SECS_J_G_matrices(geolat.flatten(), geolon.flatten() /15, secs_lat, secs_lt, constant = 1/(4 * np.pi), RI = (6371.2 + 130) * 1e3)
+Gje, Gjn = get_SECS_J_G_matrices(geolat.flatten(), geolon.flatten() , secs_lat, secs_lt * 15, constant = 1/(4 * np.pi), RI = (6371.2 + 130) * 1e3)
 
 je, jn = Gje.dot(m) * 1e3, Gjn.dot(m) * 1e3 # current in mA/m
 oax.ax.quiver(xv, yv, je, jn, scale = 5000, width = .008, zorder = 6)
@@ -378,7 +392,7 @@ jndf = getjndf(geolat * d2r, geolon * d2r) * 1e3
 oax.ax.quiver(xv, yv, jedf, jndf, scale = 5000, width = .008, zorder = 0, color = 'black', alpha = .3)
 
 
-GV = get_SECS_J_G_matrices(oax.latxx.flatten(), oax.ltxx.flatten(), secs_lat, secs_lt, type = 'potential', RI = (6371.2 + 105) * 1e3)
+GV = get_SECS_J_G_matrices(oax.latxx.flatten(), oax.ltxx.flatten() * 15, secs_lat, secs_lt * 15, current_type = 'potential', RI = (6371.2 + 105) * 1e3)
 V = GV.dot(m)
 
 # in order to avoid singularities, mask the points close to the SECS poles, and then fill in using interpolation
