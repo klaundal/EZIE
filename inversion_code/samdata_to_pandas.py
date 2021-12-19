@@ -4,8 +4,17 @@
 from scipy.io.idl import readsav
 import numpy as np
 import pandas as pd
+import os
 
-fn = '../data/proposal_stage_sam_data/EZIE_event_simulation_ezie_simulation_case_1_look_direction_case_2_retrieved_los_mag_fields.sav'
+path = os.path.dirname(__file__)
+
+
+# proposal stage OSSE:
+fn = path + '/../data/proposal_stage_sam_data/EZIE_event_simulation_ezie_simulation_case_1_look_direction_case_2_retrieved_los_mag_fields.sav'
+
+# case 1:
+fn = path + '/../data/OSSE_new/case_1/EZIE_event_simulation_CASE1_standard_EZIE_retrieved_los_mag_fields2.sav'
+
 
 idldata = readsav(fn)
 
@@ -67,5 +76,5 @@ for t in range(len(mag_c)):
 
 
 
-pd.to_pickle(data, fn.split('.')[0] + '.pd')
+pd.to_pickle(data, fn[:-3] + 'pd')
 

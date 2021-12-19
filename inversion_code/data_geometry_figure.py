@@ -74,7 +74,13 @@ print(L, W)
 
 v  = (data.loc[tm, 've'], data.loc[tm, 'vn'])
 p = data.loc[tm, 'sat_lon'], data.loc[tm, 'sat_lat']
-projection = CSprojection(p, v)
+
+v  = (data.loc[tm, 've'], data.loc[tm, 'vn'])
+angle = np.arctan2(v[1], v[0]) / d2r 
+p = data.loc[tm, 'sat_lon'], data.loc[tm, 'sat_lat']
+projection = CSprojection(p, angle)
+
+#projection = CSprojection(p, v)
 grid = CSgrid(projection, L, W, LRES, WRES, wshift = wshift)
 
 
@@ -86,7 +92,7 @@ axu         = plt.subplot2grid((10, 1), (8, 0), rowspan = 2, sharex = axgrid)#fi
 
 
 for b in grid.get_grid_boundaries(geocentric = False):
-    axgrid.plot(b[1], b[0], color = 'black', linewidth = .4)
+    axgrid.plot(b[0], b[1], color = 'black', linewidth = .4)
 
 
 obs = {'lat': [], 'lon': [], 'Be': [], 'Bn': [], 'Bu': [], 'cov_ee': [], 'cov_nn': [], 'cov_uu': [], 'cov_en': [], 'cov_eu': [], 'cov_nu': []}
@@ -99,7 +105,7 @@ for i in range(4):
 
     lon, lat = data.loc[t0:t1, 'lon_' + str(i + 1)].values, data.loc[t0:t1, 'lat_' + str(i + 1)].values
     xi, eta = projection.geo2cube(lon, lat)
-    axgrid.plot(eta, xi, color = 'C' + str(i), linewidth = 5)
+    axgrid.plot(xi, eta, color = 'C' + str(i), linewidth = 5)
     if i == 0:
         etamin, etamax = eta.min(), eta.max()
         ximin, ximax = xi.min(), xi.max()
@@ -113,39 +119,39 @@ for i in range(4):
         if xi.max() > ximax:
             ximax = xi.max()
 
-    axe.plot(eta, data.loc[t0:t1, 'dbe_' + str(i + 1)], color = 'C' + str(i), linewidth = 2)
-    axn.plot(eta, data.loc[t0:t1, 'dbn_' + str(i + 1)], color = 'C' + str(i), linewidth = 2)
-    axu.plot(eta, data.loc[t0:t1, 'dbu_' + str(i + 1)], color = 'C' + str(i), linewidth = 2)
-    axe.scatter(eta, data.loc[t0:t1, 'dbe_measured_' + str(i + 1)], c = 'C' + str(i), marker = 'o', s = 3)
-    axn.scatter(eta, data.loc[t0:t1, 'dbn_measured_' + str(i + 1)], c = 'C' + str(i), marker = 'o', s = 3)
-    axu.scatter(eta, data.loc[t0:t1, 'dbu_measured_' + str(i + 1)], c = 'C' + str(i), marker = 'o', s = 3)
+    axe.plot(xi, data.loc[t0:t1, 'dbe_' + str(i + 1)], color = 'C' + str(i), linewidth = 2)
+    axn.plot(xi, data.loc[t0:t1, 'dbn_' + str(i + 1)], color = 'C' + str(i), linewidth = 2)
+    axu.plot(xi, data.loc[t0:t1, 'dbu_' + str(i + 1)], color = 'C' + str(i), linewidth = 2)
+    axe.scatter(xi, data.loc[t0:t1, 'dbe_measured_' + str(i + 1)], c = 'C' + str(i), marker = 'o', s = 3)
+    axn.scatter(xi, data.loc[t0:t1, 'dbn_measured_' + str(i + 1)], c = 'C' + str(i), marker = 'o', s = 3)
+    axu.scatter(xi, data.loc[t0:t1, 'dbu_measured_' + str(i + 1)], c = 'C' + str(i), marker = 'o', s = 3)
 
-axe.hlines(0, etamin, etamax, color = 'black', linewidth = 1.5, linestyle = '-')
-axn.hlines(0, etamin, etamax, color = 'black', linewidth = 1.5, linestyle = '-')
-axu.hlines(0, etamin, etamax, color = 'black', linewidth = 1.5, linestyle = '-')
+axe.hlines(0, ximin, ximax, color = 'black', linewidth = 1.5, linestyle = '-')
+axn.hlines(0, ximin, ximax, color = 'black', linewidth = 1.5, linestyle = '-')
+axu.hlines(0, ximin, ximax, color = 'black', linewidth = 1.5, linestyle = '-')
 
 
 
-axe.plot([etamin, etamin], [0, 1000], color = 'black', linewidth = 1.5)
-axn.plot([etamin, etamin], [0, 1000], color = 'black', linewidth = 1.5)
-axu.plot([etamin, etamin], [0, 1000], color = 'black', linewidth = 1.5)
-axe.plot([etamin, etamin - (etamax - etamin)/100], [1000, 1000], color = 'black', linewidth = 1.5)
-axn.plot([etamin, etamin - (etamax - etamin)/100], [1000, 1000], color = 'black', linewidth = 1.5)
-axu.plot([etamin, etamin - (etamax - etamin)/100], [1000, 1000], color = 'black', linewidth = 1.5)
-axe.text(etamin - (etamax - etamin)/100, 1000, '1000 nT', ha = 'right', va = 'center')
-axn.text(etamin - (etamax - etamin)/100, 1000, '1000 nT', ha = 'right', va = 'center')
-axu.text(etamin - (etamax - etamin)/100, 1000, '1000 nT', ha = 'right', va = 'center')
+axe.plot([ximin, ximin], [0, 1000], color = 'black', linewidth = 1.5)
+axn.plot([ximin, ximin], [0, 1000], color = 'black', linewidth = 1.5)
+axu.plot([ximin, ximin], [0, 1000], color = 'black', linewidth = 1.5)
+axe.plot([ximin, ximin - (ximax - ximin)/100], [1000, 1000], color = 'black', linewidth = 1.5)
+axn.plot([ximin, ximin - (ximax - ximin)/100], [1000, 1000], color = 'black', linewidth = 1.5)
+axu.plot([ximin, ximin - (ximax - ximin)/100], [1000, 1000], color = 'black', linewidth = 1.5)
+axe.text(ximin - (ximax - ximin)/100, 1000, '1000 nT', ha = 'right', va = 'center')
+axn.text(ximin - (ximax - ximin)/100, 1000, '1000 nT', ha = 'right', va = 'center')
+axu.text(ximin - (ximax - ximin)/100, 1000, '1000 nT', ha = 'right', va = 'center')
 
-axe.plot([etamin, etamin - (etamax - etamin)/100], [0, 0], color = 'black', linewidth = 1.5)
-axn.plot([etamin, etamin - (etamax - etamin)/100], [0, 0], color = 'black', linewidth = 1.5)
-axu.plot([etamin, etamin - (etamax - etamin)/100], [0, 0], color = 'black', linewidth = 1.5)
-axe.text(etamin - (etamax - etamin)/100, 0, '0 nT', ha = 'right', va = 'center')
-axn.text(etamin - (etamax - etamin)/100, 0, '0 nT', ha = 'right', va = 'center')
-axu.text(etamin - (etamax - etamin)/100, 0, '0 nT', ha = 'right', va = 'center')
+axe.plot([ximin,   ximin - (ximax - ximin)/100], [0, 0], color = 'black', linewidth = 1.5)
+axn.plot([ximin,   ximin - (ximax - ximin)/100], [0, 0], color = 'black', linewidth = 1.5)
+axu.plot([ximin,   ximin - (ximax - ximin)/100], [0, 0], color = 'black', linewidth = 1.5)
+axe.text( ximin - (ximax -  ximin)/100, 0, '0 nT', ha = 'right', va = 'center')
+axn.text( ximin - (ximax -  ximin)/100, 0, '0 nT', ha = 'right', va = 'center')
+axu.text( ximin - (ximax -  ximin)/100, 0, '0 nT', ha = 'right', va = 'center')
 
-axe.text(etamin + (etamax - etamin)/20, 1000, '$B_{e}$', ha = 'left', va = 'center', size = 18, bbox = dict(facecolor='white', alpha=0.5))
-axn.text(etamin + (etamax - etamin)/20, 1000, '$B_{n}$', ha = 'left', va = 'center', size = 18, bbox = dict(facecolor='white', alpha=0.5))
-axu.text(etamin + (etamax - etamin)/20, 1000, '$B_{r}$', ha = 'left', va = 'center', size = 18, bbox = dict(facecolor='white', alpha=0.5))
+axe.text(ximin + (ximax - ximin)/20, 1000, '$B_{e}$', ha = 'left', va = 'center', size = 18, bbox = dict(facecolor='white', alpha=0.5))
+axn.text(ximin + (ximax - ximin)/20, 1000, '$B_{n}$', ha = 'left', va = 'center', size = 18, bbox = dict(facecolor='white', alpha=0.5))
+axu.text(ximin + (ximax - ximin)/20, 1000, '$B_{r}$', ha = 'left', va = 'center', size = 18, bbox = dict(facecolor='white', alpha=0.5))
 
 
 axe.set_ylim(-1500, 1500)
@@ -158,12 +164,12 @@ for l in np.r_[60:90:5]:
     #glat, glon = geo2mag(np.ones(360)*l, np.linspace(0, 360, 360), epoch = 2020, inverse = True)
     #xi, eta = projection.geo2cube(glon, glat)
     xi, eta = projection.geo2cube(np.linspace(0, 360, 360), np.ones(360)*l)
-    axgrid.plot(eta, xi, 'k-', linewidth = .5)
+    axgrid.plot(xi, eta, 'k-', linewidth = .5)
 for l in np.r_[0:360:15]:
     #glat, glon = geo2mag(np.ones(360)*l, np.linspace(0, 360, 360), epoch = 2020, inverse = True)
     #xi, eta = projection.geo2cube(glon, glat)
     xi, eta = projection.geo2cube(np.ones(360)*l, np.linspace(50, 90, 360))
-    axgrid.plot(eta, xi, 'k-', linewidth = .5)
+    axgrid.plot(xi, eta, 'k-', linewidth = .5)
 
 
 
@@ -183,12 +189,12 @@ for ax in [axe, axn, axu, axgrid]:
 
 km_min = -100/(RI * 1e-3)
 km_max =  100/(RI * 1e-3)
-axgrid.plot([grid.eta_mesh.min(), grid.eta_mesh.min()], [km_min, km_max], linewidth = 2, color = 'black')
-axgrid.plot([grid.eta_mesh.min() + (etamax - etamin)/100, grid.eta_mesh.min() - (etamax - etamin)/100], [km_min, km_min], linewidth = 2, color = 'black')
-axgrid.plot([grid.eta_mesh.min() + (etamax - etamin)/100, grid.eta_mesh.min() - (etamax - etamin)/100], [km_max, km_max], linewidth = 2, color = 'black')
-axgrid.text(grid.eta_mesh.min() - (etamax - etamin)/100, 0, '200 km', va = 'center', ha = 'right')
+axgrid.plot([grid.xi_mesh.min(), grid.xi_mesh.min()], [km_min, km_max], linewidth = 2, color = 'black')
+axgrid.plot([grid.xi_mesh.min() + (ximax - ximin)/100, grid.xi_mesh.min() - (ximax - ximin)/100], [km_min, km_min], linewidth = 2, color = 'black')
+axgrid.plot([grid.xi_mesh.min() + (ximax - ximin)/100, grid.xi_mesh.min() - (ximax - ximin)/100], [km_max, km_max], linewidth = 2, color = 'black')
+axgrid.text(grid.xi_mesh.min() - (ximax - ximin)/100, 0, '200 km', va = 'center', ha = 'right')
 
-xsteps = np.r_[etamin:etamax:200/RI * 1e3]
+xsteps = np.r_[ximin:ximax:200/RI * 1e3]
 #axgrid.plot(xsteps, [grid.xi_mesh.min()]*len(xsteps), linewidth = 2, color = 'black')
 #for x in xsteps:
 #    axgrid.plot([x, x], [grid.xi_mesh.min() - (etamax - etamin)/100, grid.xi_mesh.min() + (etamax - etamin)/100], linewidth = 2, color = 'black')
@@ -200,13 +206,13 @@ for ax in [axe, axn, axu, axgrid]:
 
 
 satxi, sateta = projection.geo2cube(data.loc[t0:t1, 'sat_lon'], data.loc[t0:t1, 'sat_lat'])
-axgrid.plot(sateta, satxi, 'k-', zorder = 500)  
-axgrid.scatter(sateta[-1], satxi[-1], marker = '>', color = 'black', s = 50, zorder = 100)
-axgrid.text(sateta[-1], satxi[-1] - 50/(RI * 1e-3), 'Satellite direction', ha = 'center', va = 'top', bbox = dict(facecolor='white', alpha=0.9), size = 14)
+axgrid.plot(satxi, sateta, 'k-', zorder = 500)  
+axgrid.scatter(satxi[-1], sateta[-1], marker = '>', color = 'black', s = 50, zorder = 100)
+axgrid.text(satxi[-1], sateta[-1] - 50/(RI * 1e-3), 'Satellite direction', ha = 'center', va = 'top', bbox = dict(facecolor='white', alpha=0.9), size = 14)
 
-axe.scatter(etamax, 0, marker = '>', c = 'black', s = 50, zorder = 50)
-axn.scatter(etamax, 0, marker = '>', c = 'black', s = 50, zorder = 50)
-axu.scatter(etamax, 0, marker = '>', c = 'black', s = 50, zorder = 50)
+axe.scatter(ximax, 0, marker = '>', c = 'black', s = 50, zorder = 50)
+axn.scatter(ximax, 0, marker = '>', c = 'black', s = 50, zorder = 50)
+axu.scatter(ximax, 0, marker = '>', c = 'black', s = 50, zorder = 50)
 
 
 

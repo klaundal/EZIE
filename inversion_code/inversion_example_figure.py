@@ -7,31 +7,44 @@ from dipole import geo2mag
 from secsy import spherical 
 from simulation_utils import get_MHD_jeq, get_MHD_dB
 import pandas as pd
+import os
 
+
+path = os.path.dirname(__file__)
 
 TRIM = True
 COMPONENT = 'U' # component to plot ('N', 'U', or 'E')
 
-#info = {'filename':'sam_data/ezie_simulation_background_information_for_kalle.sav',
-#        'mapshift':-30,
-#        'observation_height':80,
-#        'output_path':'figs/',
-#        'wshift':120}
-
-info = {'filename':'../data/proposal_stage_sam_data/EZIE_event_simulation_ezie_simulation_case_1_look_direction_case_2_retrieved_los_mag_fields.pd',
+# PROPOSAL STAGE OSSE
+info = {'filename':path + '/../data/proposal_stage_sam_data/EZIE_event_simulation_ezie_simulation_case_1_look_direction_case_2_retrieved_los_mag_fields.pd',
+        'mhd_B_fn':path + '/../data/proposal_stage_mhd_data/gamera_dBs_Jfull_80km_2430',
         'mapshift':-210, # Sam has shifted the MHD output by this amount to get an orbit that crosses something interesting. The shift must be applied to my MHD readout functions
         'observation_height':80,
         'output_path':'final_figs/',
-        'wshift':25}
+        'wshift':25,
+        'tm':dt.datetime(2023, 7, 3, 2, 42, 22),
+        'outputfn':'proposal_stage',
+        'mhdfunc':get_MHD_dB,
+        'clevels':np.linspace(-700, 700, 12)}
 
-
+# OSSE CASE 1
+"""
+info = {'filename':path + '/../data/OSSE_new/case_1/EZIE_event_simulation_CASE1_standard_EZIE_retrieved_los_mag_fields2.pd',
+        'mapshift':0, # Sam has shifted the MHD output by this amount to get an orbit that crosses something interesting. The shift must be applied to my MHD readout functions
+        'observation_height':80,
+        'output_path':'final_figs/',
+        'wshift':25,
+        'tm':dt.datetime(2023, 7, 4, 5, 59, 51),
+        'outputfn':'osse_case1',
+        'clevels':np.linspace(-300, 300, 12)}
+"""
 
 OBSHEIGHT = info['observation_height']
 
 d2r = np.pi / 180
 
-LRES = 20. # spatial resolution of SECS grid along satellite track
-WRES = 40. # spatial resolution perpendicular to satellite tarck
+WRES = 40. # spatial resolution of SECS grid along satellite track
+LRES = 20. # spatial resolution perpendicular to satellite tarck
 wshift = info['wshift'] # shift center of grid wshift km to the right of the satellite (rel to velocity)
 DT  = 4 # size of time window [min]
 RI  = (6371.2 + 110) * 1e3 # SECS height (m)
@@ -41,8 +54,8 @@ data = pd.read_pickle(info['filename'])
 # convert all geographic coordinates and vector components in data to geomagnetic:
 for i in range(4):
     i = i + 1
-    data['lat_' + str(i)], data['lon_' + str(i)], data['dbe_' + str(i)], data['dbn_' + str(i)] = geo2mag(data['lat_' + str(i)].values, data['lon_' + str(i)].values, data['dbe_' + str(i)].values, data['dbn_' + str(i)].values, epoch = 2020)
     _, _, data['dbe_measured_' + str(i)], data['dbn_measured_' + str(i)] = geo2mag(data['lat_' + str(i)].values, data['lon_' + str(i)].values, data['dbe_measured_' + str(i)].values, data['dbn_measured_' + str(i)].values, epoch = 2020)
+    data['lat_' + str(i)], data['lon_' + str(i)], data['dbe_' + str(i)], data['dbn_' + str(i)] = geo2mag(data['lat_' + str(i)].values, data['lon_' + str(i)].values, data['dbe_' + str(i)].values, data['dbn_' + str(i)].values, epoch = 2020)
 data['sat_lat'], data['sat_lon'] = geo2mag(data['sat_lat'].values, data['sat_lon'].values, epoch = 2020)
 
 # calculate SC velocity
@@ -53,7 +66,7 @@ data['ve'] = np.hstack((te, np.nan))
 data['vn'] = np.hstack((tn, np.nan))
 
 # get index of central point of analysis interval:
-tm = data.index[1*len(data.index)//5:4*len(data.index)//5:2][39]
+tm = info['tm']
 
 # limits of analysis interval:
 t0 = data.index[data.index.get_loc(tm - dt.timedelta(seconds = DT//2 * 60), method = 'nearest')]
@@ -73,8 +86,11 @@ print(L, W)
 
 # set up the cubed sphere projection
 v  = (data.loc[tm, 've'], data.loc[tm, 'vn'])
+angle = np.arctan2(v[1], v[0]) / d2r + np.pi/2 
+
+
 p = data.loc[tm, 'sat_lon'], data.loc[tm, 'sat_lat']
-projection = CSprojection(p, v)
+projection = CSprojection(p, angle)
 grid = CSgrid(projection, L, W, LRES, WRES, wshift = wshift)
 Le, Ln = grid.get_Le_Ln()
 LL = Le.T.dot(Le) # matrix for calculation of eastward gradient - eastward in magnetic since all coords above have been converted to dipole coords
@@ -116,7 +132,7 @@ d = np.hstack((obs['Be'], obs['Bn'], obs['Bu']))
 GTQG = G.T.dot(Q).dot(G)
 GTQd = G.T.dot(Q).dot(d)
 scale = np.max(GTQG)
-R = np.eye(GTQG.shape[0]) * scale*1e-1 + LL / np.abs(LL).max() * scale * 1e0 
+R = np.eye(GTQG.shape[0]) * scale*1e0 + LL / np.abs(LL).max() * scale * 1e1 
 
 SS = np.linalg.inv(GTQG + R).dot(G.T.dot(Q))
 m = SS.dot(d).flatten()
@@ -147,7 +163,7 @@ for i in range(4):
     lon, lat = data.loc[t0:t1, 'lon_' + str(i + 1)].values, data.loc[t0:t1, 'lat_' + str(i + 1)].values
     xi, eta = projection.geo2cube(lon, lat)
     for ax in [axe_secs, axn_secs, axr_secs]:
-        ax.plot(xi, eta, color = 'C' + str(i), linewidth = 3)
+        ax.plot(eta, xi, color = 'C' + str(i), linewidth = 3)
     if i == 0:
         etamin, etamax = eta.min(), eta.max()
         ximin, ximax = xi.min(), xi.max()
@@ -170,9 +186,9 @@ Gde, Gdn, Gdu = get_SECS_B_G_matrices(grid.lat.flatten()+.1, grid.lon.flatten(),
                                       grid.lat.flatten(), grid.lon.flatten(), 
                                       current_type = 'divergence_free', RI = RI)
 
-mhdBu = get_MHD_dB(grid.lat.flatten(), grid.lon.flatten() + info['mapshift'])
-mhdBe = get_MHD_dB(grid.lat.flatten(), grid.lon.flatten() + info['mapshift'], component = 'Bphi [nT]')
-mhdBn = -get_MHD_dB(grid.lat.flatten(), grid.lon.flatten() + info['mapshift'], component = 'Btheta [nT]')
+mhdBu = get_MHD_dB(grid.lat.flatten(), grid.lon.flatten() + info['mapshift'], fn = info['mhd_B_fn'])
+mhdBe = get_MHD_dB(grid.lat.flatten(), grid.lon.flatten() + info['mapshift'], component = 'Bphi [nT]', fn = info['mhd_B_fn'])
+mhdBn = -get_MHD_dB(grid.lat.flatten(), grid.lon.flatten() + info['mapshift'], component = 'Btheta [nT]', fn = info['mhd_B_fn'])
 mhdB = np.sqrt(mhdBe**2 + mhdBn**2 + mhdBu**2).reshape(grid.lat.shape)
 
 
@@ -181,14 +197,14 @@ B = np.sqrt(Gde.dot(m).reshape(grid.eta.shape)**2 + Gdn.dot(m).reshape(grid.eta.
 
 
 
-cntrs = axr_secs.contourf(grid.xi, grid.eta, Gdu.dot(m).reshape(grid.eta.shape), levels = np.linspace(-700, 700, 12), cmap = plt.cm.bwr, zorder = 0, extend = 'both')
-axr_true.contourf(grid.xi, grid.eta, mhdBu.reshape(grid.eta.shape), levels = cntrs.levels, cmap = plt.cm.bwr, zorder = 0, extend = 'both')
+cntrs = axr_secs.contourf(grid.eta, grid.xi, Gdu.dot(m).reshape(grid.shape), levels = info['clevels'], cmap = plt.cm.bwr, zorder = 0, extend = 'both')
+axr_true.contourf(grid.eta, grid.xi, mhdBu.reshape(grid.shape), levels = cntrs.levels, cmap = plt.cm.bwr, zorder = 0, extend = 'both')
 
-axe_secs.contourf(grid.xi, grid.eta, Gde.dot(m).reshape(grid.eta.shape), levels = cntrs.levels, cmap = plt.cm.bwr, zorder = 0, extend = 'both')
-axe_true.contourf(grid.xi, grid.eta, mhdBe.reshape(grid.eta.shape), levels = cntrs.levels, cmap = plt.cm.bwr, zorder = 0, extend = 'both')
+axe_secs.contourf(grid.eta, grid.xi, Gde.dot(m).reshape(grid.shape), levels = cntrs.levels, cmap = plt.cm.bwr, zorder = 0, extend = 'both')
+axe_true.contourf(grid.eta, grid.xi, mhdBe.reshape(grid.shape), levels = cntrs.levels, cmap = plt.cm.bwr, zorder = 0, extend = 'both')
 
-axn_secs.contourf(grid.xi, grid.eta, Gdn.dot(m).reshape(grid.eta.shape), levels = cntrs.levels, cmap = plt.cm.bwr, zorder = 0, extend = 'both')
-axn_true.contourf(grid.xi, grid.eta, mhdBn.reshape(grid.eta.shape), levels = cntrs.levels, cmap = plt.cm.bwr, zorder = 0, extend = 'both')
+axn_secs.contourf(grid.eta, grid.xi, Gdn.dot(m).reshape(grid.shape), levels = cntrs.levels, cmap = plt.cm.bwr, zorder = 0, extend = 'both')
+axn_true.contourf(grid.eta, grid.xi, mhdBn.reshape(grid.shape), levels = cntrs.levels, cmap = plt.cm.bwr, zorder = 0, extend = 'both')
 
 ax_cbar.contourf(np.vstack((cntrs.levels, cntrs.levels)), np.vstack((np.zeros(cntrs.levels.size), np.ones(cntrs.levels.size))), np.vstack((cntrs.levels, cntrs.levels)), cmap = plt.cm.bwr, levels = cntrs.levels)
 ax_cbar.set_xlabel('nT')
@@ -201,7 +217,7 @@ je, jn = Gje.dot(m).flatten(), Gjn.dot(m).flatten()
 xi, eta, jxi, jeta = projection.vector_cube_projection(je.flatten(), jn.flatten(), jlon, jlat)
 
 for ax in [axe_secs, axn_secs, axr_secs]:
-    ax.quiver(xi, eta, jxi, jeta, linewidth = 2, scale = 1e10, zorder = 40, color = 'black')#, scale = 1e10)
+    ax.quiver(eta, xi, jeta, jxi, linewidth = 2, scale = 1e10, zorder = 40, color = 'black')#, scale = 1e10)
 
 
 
@@ -209,7 +225,7 @@ mhd_je, mhd_jn = get_MHD_jeq(jlat, jlon + info['mapshift'])
 xi, eta, mhd_jxi, mhd_jeta = projection.vector_cube_projection(mhd_je, mhd_jn, jlon, jlat)
 #axmap.quiver(xi, eta, mhd_jxi, mhd_jeta, linewidth = 1, scale = 10, color = 'grey')#, scale = 1e10)
 for ax in [axe_true, axn_true, axr_true , axe_secs, axn_secs, axr_secs]:
-    ax.quiver(xi, eta, mhd_jxi, mhd_jeta, linewidth = 2, scale = 10, color = 'grey', zorder = 38)#, scale = 1e10)
+    ax.quiver(eta, xi, mhd_jeta, mhd_jxi, linewidth = 2, scale = 10, color = 'grey', zorder = 38)#, scale = 1e10)
 
 
 
@@ -218,11 +234,11 @@ for ax in [axe_secs, axe_true, axn_secs, axn_true, axr_secs, axr_true]:
     ylim = ax.get_ylim()
     for l in np.r_[60:90:5]:
         xi, eta = projection.geo2cube(np.linspace(0, 360, 360), np.ones(360)*l)
-        ax.plot(xi, eta, color = 'lightgrey', linewidth = .5, zorder = 1)
+        ax.plot(eta, xi, color = 'lightgrey', linewidth = .5, zorder = 1)
 
-    for l in np.r_[0:360:15]:
+    for linewidth in np.r_[0:360:15]:
         xi, eta = projection.geo2cube(np.ones(360)*l, np.linspace(50, 90, 360))
-        ax.plot(xi, eta, color = 'lightgrey', linewidth = .5, zorder = 1)
+        ax.plot(eta, xi, color = 'lightgrey', linewidth = .5, zorder = 1)
 
     #ax.set_xlim(ximin - 25/(RI * 1e-3), ximax + 25/(RI * 1e-3))
     #ax.set_ylim(etamin, etamax)
@@ -239,21 +255,21 @@ for ax in [axe_secs, axe_true, axn_secs, axn_true, axr_secs, axr_true]:
 for ax, label in zip([axe_secs, axe_true, axn_secs, axn_true, axr_secs, axr_true],
                      ['Be SECS', 'Be MHD', 'Bn SECS', 'Bn MHD', 'Br SECS', 'Br MHD']):
     
-    ax.text(ximin- 25/(RI * 1e-3), etamax- 25/(RI * 1e-3), label, va = 'top', ha = 'left', bbox = dict(facecolor='white', alpha=1), zorder = 101, size = 14)
+    ax.text(etamax- 25/(RI * 1e-3), ximin- 25/(RI * 1e-3), label, va = 'top', ha = 'left', bbox = dict(facecolor='white', alpha=1), zorder = 101, size = 14)
 
 
 # plot grid in top left panel to show spatial dimensions:
 xigrid, etagrid = np.meshgrid(np.r_[grid.xi.min():grid.xi.max() + 200/RI*1e3:200/RI*1e3], 
                               np.r_[grid.eta.min():grid.eta.max() + 200/RI*1e3:200/RI*1e3])
 for i in range(xigrid.shape[0]):
-    axe_true.plot(xigrid[i], etagrid[i], 'k-', linewidth = .7)
+    axe_true.plot(etagrid[i], xigrid[i], 'k-', linewidth = .7)
 for j in range(xigrid.shape[1]):
-    axe_true.plot(xigrid[:, j], etagrid[:, j], 'k-', linewidth = .7)
+    axe_true.plot(etagrid[:, j], xigrid[:, j], 'k-', linewidth = .7)
 
 
 for ax in [axe_secs, axe_true, axn_secs, axn_true, axr_secs, axr_true]:
-    ax.set_xlim(ximin - 25/(RI * 1e-3), ximax + 25/(RI * 1e-3))
-    ax.set_ylim(etamin + 55/(RI * 1e-3), etamax - 55/(RI * 1e-3))
+    ax.set_xlim(etamin - 25/(RI * 1e-3), etamax + 25/(RI * 1e-3))
+    ax.set_ylim(ximin + 55/(RI * 1e-3), ximax - 55/(RI * 1e-3))
     ax.set_adjustable('datalim') 
     ax.set_aspect('equal')
     #ax.set_xlim(*xlim)
@@ -261,8 +277,8 @@ for ax in [axe_secs, axe_true, axn_secs, axn_true, axr_secs, axr_true]:
 
 plt.subplots_adjust(bottom = .05, top = .99, left = .01, right = .99)
 
-plt.savefig('./figures/inversion_example.png', dpi = 250)
-plt.savefig('./figures/inversion_example.pdf')
+plt.savefig('./figures/' + info['outputfn'] + 'inversion_example.png', dpi = 250)
+plt.savefig('./figures/' + info['outputfn'] + 'inversion_example.pdf')
 
 
 # save the relevant parts of the datafile for publication
@@ -270,7 +286,7 @@ columns = ['lat_1', 'lon_1', 'dbe_1', 'dbn_1', 'dbu_1', 'lat_2', 'lon_2', 'dbe_2
 savedata = data[t0:t1][columns]
 savedata.index = dt = (savedata.index-savedata.index[0]).seconds
 savedata.index.name = 'seconds'
-savedata.to_csv('electrojet_inversion_data.csv')
+savedata.to_csv(info['outputfn'] + 'electrojet_inversion_data.csv')
 
 
 plt.show()
