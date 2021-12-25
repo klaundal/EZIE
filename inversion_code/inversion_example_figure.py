@@ -28,7 +28,6 @@ info = {'filename':path + '/../data/proposal_stage_sam_data/EZIE_event_simulatio
         'clevels':np.linspace(-700, 700, 12)}
 
 # OSSE CASE 1
-"""
 info = {'filename':path + '/../data/OSSE_new/case_1/EZIE_event_simulation_CASE1_standard_EZIE_retrieved_los_mag_fields2.pd',
         'mhd_B_fn':path + '/../data/OSSE_new/case_1/gamera_dBs_80km_2016-08-09T08_49_45.txt',
         'mapshift':180, # Sam has shifted the MHD output by this amount to get an orbit that crosses something interesting. The shift must be applied to my MHD readout functions
@@ -39,8 +38,42 @@ info = {'filename':path + '/../data/OSSE_new/case_1/EZIE_event_simulation_CASE1_
         'outputfn':'osse_case1',
         'mhdfunc':get_MHD_dB_new,
         'clevels':np.linspace(-300, 300, 12)}
-"""
 
+# OSSE CASE 2
+info = {'filename':path + '/../data/OSSE_new/case_2/EZIE_event_simulation_CASE2_standard_EZIE_retrieved_los_mag_fields2.pd',
+        'mhd_B_fn':path + '/../data/OSSE_new/case_2/gamera_dBs_80km_2016-08-09T09_17_52.txt',
+        'mapshift':180, # Sam has shifted the MHD output by this amount to get an orbit that crosses something interesting. The shift must be applied to my MHD readout functions
+        'observation_height':80,
+        'output_path':'final_figs/',
+        'wshift':25,
+        'tm':dt.datetime(2023, 7, 4, 12, 28, 14),
+        'outputfn':'osse_case1',
+        'mhdfunc':get_MHD_dB_new,
+        'clevels':np.linspace(-300, 300, 12)}
+
+# OSSE CASE 3
+info = {'filename':path + '/../data/OSSE_new/case_3/EZIE_event_simulation_CASE3_standard_EZIE_retrieved_los_mag_fields2.pd',
+        'mhd_B_fn':path + '/../data/OSSE_new/case_3/gamera_dBs_80km_2016-08-09T09_24_22.txt',
+        'mapshift':180, # Sam has shifted the MHD output by this amount to get an orbit that crosses something interesting. The shift must be applied to my MHD readout functions
+        'observation_height':80,
+        'output_path':'final_figs/',
+        'wshift':25,
+        'tm':dt.datetime(2023, 7, 4, 12, 28, 14),
+        'outputfn':'osse_case1',
+        'mhdfunc':get_MHD_dB_new,
+        'clevels':np.linspace(-300, 300, 12)}
+
+# OSSE CASE 4
+info = {'filename':path + '/../data/OSSE_new/case_4/EZIE_event_simulation_CASE4_standard_EZIE_retrieved_los_mag_fields2.pd',
+        'mhd_B_fn':path + '/../data/OSSE_new/case_4/gamera_dBs_80km_2016-08-09T09_38_29.txt',
+        'mapshift':180, # Sam has shifted the MHD output by this amount to get an orbit that crosses something interesting. The shift must be applied to my MHD readout functions
+        'observation_height':80,
+        'output_path':'final_figs/',
+        'wshift':25,
+        'tm':dt.datetime(2023, 7, 4, 12, 28, 14),
+        'outputfn':'osse_case1',
+        'mhdfunc':get_MHD_dB_new,
+        'clevels':np.linspace(-300, 300, 12)}
 
 
 OBSHEIGHT = info['observation_height']
@@ -137,7 +170,7 @@ d = np.hstack((obs['Be'], obs['Bn'], obs['Bu']))
 GTQG = G.T.dot(Q).dot(G)
 GTQd = G.T.dot(Q).dot(d)
 scale = np.max(GTQG)
-R = np.eye(GTQG.shape[0]) * scale*1e0 + LL / np.abs(LL).max() * scale * 1e1 
+R = np.eye(GTQG.shape[0]) * scale*1e-1 + LL / np.abs(LL).max() * scale * 1e2 
 
 SS = np.linalg.inv(GTQG + R).dot(G.T.dot(Q))
 m = SS.dot(d).flatten()

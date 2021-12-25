@@ -15,6 +15,16 @@ fn = path + '/../data/proposal_stage_sam_data/EZIE_event_simulation_ezie_simulat
 # case 1:
 fn = path + '/../data/OSSE_new/case_1/EZIE_event_simulation_CASE1_standard_EZIE_retrieved_los_mag_fields2.sav'
 
+# case 2:
+fn = path + '/../data/OSSE_new/case_2/EZIE_event_simulation_CASE2_standard_EZIE_retrieved_los_mag_fields2.sav'
+
+# case 3:
+fn = path + '/../data/OSSE_new/case_3/EZIE_event_simulation_CASE3_standard_EZIE_retrieved_los_mag_fields2.sav'
+
+# case 4:
+fn = path + '/../data/OSSE_new/case_4/EZIE_event_simulation_CASE4_standard_EZIE_retrieved_los_mag_fields2.sav'
+
+
 
 idldata = readsav(fn)
 
