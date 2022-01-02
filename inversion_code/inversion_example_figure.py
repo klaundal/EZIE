@@ -8,73 +8,11 @@ from secsy import spherical
 from simulation_utils import get_MHD_jeq, get_MHD_dB, get_MHD_dB_new
 import pandas as pd
 import os
+import cases
+from importlib import reload
+reload(cases) 
 
-
-path = os.path.dirname(__file__)
-
-TRIM = True
-COMPONENT = 'U' # component to plot ('N', 'U', or 'E')
-
-# PROPOSAL STAGE OSSE
-info = {'filename':path + '/../data/proposal_stage_sam_data/EZIE_event_simulation_ezie_simulation_case_1_look_direction_case_2_retrieved_los_mag_fields.pd',
-        'mhd_B_fn':path + '/../data/proposal_stage_mhd_data/gamera_dBs_Jfull_80km_2430',
-        'mapshift':-210, # Sam has shifted the MHD output by this amount to get an orbit that crosses something interesting. The shift must be applied to my MHD readout functions
-        'observation_height':80,
-        'output_path':'final_figs/',
-        'wshift':-50,
-        'tm':dt.datetime(2023, 7, 3, 2, 42, 22),
-        'outputfn':'proposal_stage',
-        'mhdfunc':get_MHD_dB,
-        'clevels':np.linspace(-700, 700, 12)}
-
-# OSSE CASE 1
-info = {'filename':path + '/../data/OSSE_new/case_1/EZIE_event_simulation_CASE1_standard_EZIE_retrieved_los_mag_fields2.pd',
-        'mhd_B_fn':path + '/../data/OSSE_new/case_1/gamera_dBs_80km_2016-08-09T08_49_45.txt',
-        'mapshift':180, # Sam has shifted the MHD output by this amount to get an orbit that crosses something interesting. The shift must be applied to my MHD readout functions
-        'observation_height':80,
-        'output_path':'final_figs/',
-        'wshift':25,
-        'tm':dt.datetime(2023, 7, 4, 5, 59, 51),
-        'outputfn':'osse_case1',
-        'mhdfunc':get_MHD_dB_new,
-        'clevels':np.linspace(-300, 300, 12)}
-
-# OSSE CASE 2
-info = {'filename':path + '/../data/OSSE_new/case_2/EZIE_event_simulation_CASE2_standard_EZIE_retrieved_los_mag_fields2.pd',
-        'mhd_B_fn':path + '/../data/OSSE_new/case_2/gamera_dBs_80km_2016-08-09T09_17_52.txt',
-        'mapshift':180, # Sam has shifted the MHD output by this amount to get an orbit that crosses something interesting. The shift must be applied to my MHD readout functions
-        'observation_height':80,
-        'output_path':'final_figs/',
-        'wshift':25,
-        'tm':dt.datetime(2023, 7, 4, 12, 28, 14),
-        'outputfn':'osse_case1',
-        'mhdfunc':get_MHD_dB_new,
-        'clevels':np.linspace(-300, 300, 12)}
-
-# OSSE CASE 3
-info = {'filename':path + '/../data/OSSE_new/case_3/EZIE_event_simulation_CASE3_standard_EZIE_retrieved_los_mag_fields2.pd',
-        'mhd_B_fn':path + '/../data/OSSE_new/case_3/gamera_dBs_80km_2016-08-09T09_24_22.txt',
-        'mapshift':180, # Sam has shifted the MHD output by this amount to get an orbit that crosses something interesting. The shift must be applied to my MHD readout functions
-        'observation_height':80,
-        'output_path':'final_figs/',
-        'wshift':25,
-        'tm':dt.datetime(2023, 7, 4, 12, 28, 14),
-        'outputfn':'osse_case1',
-        'mhdfunc':get_MHD_dB_new,
-        'clevels':np.linspace(-300, 300, 12)}
-
-# OSSE CASE 4
-info = {'filename':path + '/../data/OSSE_new/case_4/EZIE_event_simulation_CASE4_standard_EZIE_retrieved_los_mag_fields2.pd',
-        'mhd_B_fn':path + '/../data/OSSE_new/case_4/gamera_dBs_80km_2016-08-09T09_38_29.txt',
-        'mapshift':180, # Sam has shifted the MHD output by this amount to get an orbit that crosses something interesting. The shift must be applied to my MHD readout functions
-        'observation_height':80,
-        'output_path':'final_figs/',
-        'wshift':25,
-        'tm':dt.datetime(2023, 7, 4, 12, 28, 14),
-        'outputfn':'osse_case1',
-        'mhdfunc':get_MHD_dB_new,
-        'clevels':np.linspace(-300, 300, 12)}
-
+info = cases.cases['case_4']
 
 OBSHEIGHT = info['observation_height']
 
@@ -83,8 +21,9 @@ d2r = np.pi / 180
 LRES = 40. # spatial resolution of SECS grid along satellite track
 WRES = 20. # spatial resolution perpendicular to satellite tarck
 wshift = info['wshift'] # shift center of grid wshift km to the right of the satellite (rel to velocity)
-DT  = 4 # size of time window [min]
+DT  = info['DT'] # size of time window [min]
 RI  = (6371.2 + 110) * 1e3 # SECS height (m)
+RE  = 6371.2e3
 
 data = pd.read_pickle(info['filename'])
 
@@ -137,9 +76,9 @@ obs = {'lat': [], 'lon': [], 'Be': [], 'Bn': [], 'Bu': [], 'cov_ee': [], 'cov_nn
 for i in range(4):
     obs['lat'] += list(data.loc[t0:t1, 'lat_' + str(i + 1)].values)
     obs['lon'] += list(data.loc[t0:t1, 'lon_' + str(i + 1)].values)
-    obs['Be' ] += list(data.loc[t0:t1, 'dbe_measured_'  + str(i + 1)].values)
-    obs['Bn' ] += list(data.loc[t0:t1, 'dbn_measured_'  + str(i + 1)].values)
-    obs['Bu' ] += list(data.loc[t0:t1, 'dbu_measured_'  + str(i + 1)].values)
+    obs['Be' ] += list(data.loc[t0:t1, 'dbe_measured_'  + str(i + 1)].values * info['signs'][0])
+    obs['Bn' ] += list(data.loc[t0:t1, 'dbn_measured_'  + str(i + 1)].values * info['signs'][1])
+    obs['Bu' ] += list(data.loc[t0:t1, 'dbu_measured_'  + str(i + 1)].values * info['signs'][2])
     obs['cov_ee'] += list(data.loc[t0:t1, 'cov_ee_' + str(i + 1)].values)
     obs['cov_nn'] += list(data.loc[t0:t1, 'cov_nn_' + str(i + 1)].values)
     obs['cov_uu'] += list(data.loc[t0:t1, 'cov_uu_' + str(i + 1)].values)
@@ -170,7 +109,7 @@ d = np.hstack((obs['Be'], obs['Bn'], obs['Bu']))
 GTQG = G.T.dot(Q).dot(G)
 GTQd = G.T.dot(Q).dot(d)
 scale = np.max(GTQG)
-R = np.eye(GTQG.shape[0]) * scale*1e-1 + LL / np.abs(LL).max() * scale * 1e2 
+R = np.eye(GTQG.shape[0]) * scale*1e0 + LL / np.abs(LL).max() * scale * 1e3 
 
 SS = np.linalg.inv(GTQG + R).dot(G.T.dot(Q))
 m = SS.dot(d).flatten()
@@ -215,21 +154,21 @@ Gde, Gdn, Gdu = get_SECS_B_G_matrices(grid.lat.flatten()+.1, grid.lon.flatten(),
                                       current_type = 'divergence_free', RI = RI)
 
 # get maps of MHD magnetic fields:
-mhdBu =  info['mhdfunc'](grid.lat.flatten(), grid.lon.flatten() + info['mapshift'], fn = info['mhd_B_fn'])
-mhdBe =  info['mhdfunc'](grid.lat.flatten(), grid.lon.flatten() + info['mapshift'], component = 'Bphi [nT]', fn = info['mhd_B_fn'])
-mhdBn = -info['mhdfunc'](grid.lat.flatten(), grid.lon.flatten() + info['mapshift'], component = 'Btheta [nT]', fn = info['mhd_B_fn'])
+mhdBu =  info['mhdfunc'](grid.lat_mesh.flatten(), grid.lon_mesh.flatten() + info['mapshift'], fn = info['mhd_B_fn'])
+mhdBe =  info['mhdfunc'](grid.lat_mesh.flatten(), grid.lon_mesh.flatten() + info['mapshift'], component = 'Bphi [nT]', fn = info['mhd_B_fn'])
+mhdBn = -info['mhdfunc'](grid.lat_mesh.flatten(), grid.lon_mesh.flatten() + info['mapshift'], component = 'Btheta [nT]', fn = info['mhd_B_fn'])
 
 # plot magnetic field in upward direction (MHD and retrieved)
 cntrs = axr_secs.contourf(grid.xi, grid.eta, Gdu.dot(m).reshape(grid.shape), levels = info['clevels'], cmap = plt.cm.bwr, zorder = 0, extend = 'both')
-axr_true.contourf(grid.xi, grid.eta, mhdBu.reshape(grid.shape), levels = cntrs.levels, cmap = plt.cm.bwr, zorder = 0, extend = 'both')
+axr_true.contourf(grid.xi_mesh, grid.eta_mesh, mhdBu.reshape(grid.lat_mesh.shape), levels = cntrs.levels, cmap = plt.cm.bwr, zorder = 0, extend = 'both')
 
 # plot magnetic field in eastward direction (MHD and retrieved)
 axe_secs.contourf(grid.xi, grid.eta, Gde.dot(m).reshape(grid.shape), levels = cntrs.levels, cmap = plt.cm.bwr, zorder = 0, extend = 'both')
-axe_true.contourf(grid.xi, grid.eta, mhdBe.reshape(grid.shape), levels = cntrs.levels, cmap = plt.cm.bwr, zorder = 0, extend = 'both')
+axe_true.contourf(grid.xi_mesh, grid.eta_mesh, mhdBe.reshape(grid.lat_mesh.shape), levels = cntrs.levels, cmap = plt.cm.bwr, zorder = 0, extend = 'both')
 
 # plot magnetic field in northward direction (MHD and retrieved)
 axn_secs.contourf(grid.xi, grid.eta, Gdn.dot(m).reshape(grid.shape), levels = cntrs.levels, cmap = plt.cm.bwr, zorder = 0, extend = 'both')
-axn_true.contourf(grid.xi, grid.eta, mhdBn.reshape(grid.shape), levels = cntrs.levels, cmap = plt.cm.bwr, zorder = 0, extend = 'both')
+axn_true.contourf(grid.xi_mesh, grid.eta_mesh, mhdBn.reshape(grid.lat_mesh.shape), levels = cntrs.levels, cmap = plt.cm.bwr, zorder = 0, extend = 'both')
 
 # plot colorbar:
 ax_cbar.contourf(np.vstack((cntrs.levels, cntrs.levels)), np.vstack((np.zeros(cntrs.levels.size), np.ones(cntrs.levels.size))), np.vstack((cntrs.levels, cntrs.levels)), cmap = plt.cm.bwr, levels = cntrs.levels)
@@ -246,15 +185,20 @@ xi, eta, jxi, jeta = projection.vector_cube_projection(je.flatten(), jn.flatten(
 
 # plot the equivalent current in the SECS panels:
 for ax in [axe_secs, axn_secs, axr_secs]:
-    ax.quiver(xi, eta, jxi, jeta, linewidth = 2, scale = 1e10, zorder = 40, color = 'black')#, scale = 1e10)
+    ax.quiver(xi, eta, jxi, jeta, linewidth = 2, scale = 6e9, zorder = 40, color = 'black')#, scale = 1e10)
 
-# get the MHD equivalent current field:
-mhd_je, mhd_jn = get_MHD_jeq(jlat, jlon + info['mapshift'])
+# calcualte the equivalent current corresponding to MHD output with perfect coverage:
+Ge_Bj, Gn_Bj, Gu_Bj = get_SECS_B_G_matrices(grid.lat_mesh, grid.lon_mesh, RE + OBSHEIGHT * 1e3, grid.lat[::2, ::2], grid.lon[::2, ::2], RI = RI)
+mj = np.linalg.lstsq(np.vstack((Ge_Bj, Gn_Bj, Gu_Bj)), np.hstack((mhdBe, mhdBn, mhdBu)), rcond = 1e-2)[0]
+
+Ge_j, Gn_j = get_SECS_J_G_matrices(jlat, jlon, grid.lat[::2, ::2], grid.lon[::2, ::2], current_type = 'divergence_free', RI = RI)
+mhd_je, mhd_jn = Ge_j.dot(mj), Gn_j.dot(mj)
+#mhd_je, mhd_jn = get_MHD_jeq(jlat, jlon + info['mapshift'])
 xi, eta, mhd_jxi, mhd_jeta = projection.vector_cube_projection(mhd_je, mhd_jn, jlon, jlat)
 
 # plot the MHD equivalent current in eaach panel
 for ax in [axe_true, axn_true, axr_true , axe_secs, axn_secs, axr_secs]:
-    ax.quiver(xi, eta, mhd_jxi, mhd_jeta, linewidth = 2, scale = 10, color = 'grey', zorder = 38)#, scale = 1e10)
+    ax.quiver(xi, eta, mhd_jxi, mhd_jeta, linewidth = 2, scale = 6e9, color = 'grey', zorder = 38)#, scale = 1e10)
 
 
 # plot coordinate grids, fix aspect ratio and axes in each panel

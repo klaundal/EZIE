@@ -8,9 +8,11 @@ from dipole import geo2mag
 from secsy import spherical 
 from simulation_utils import get_MHD_jeq, get_MHD_dB
 import pandas as pd
+import os
 
 mpl.rcParams['text.usetex'] = False
 
+path = os.path.dirname(__file__)
 
 COMPONENT = 'U' # component to plot ('N', 'U', or 'E')
 
@@ -20,16 +22,20 @@ info = {'filename':'../data/proposal_stage_sam_data/ezie_simulation_background_i
         'output_path':'figs/',
         'wshift':120}
 
-info = {'filename':'../data/proposal_stage_sam_data/EZIE_event_simulation_ezie_simulation_case_1_look_direction_case_2_retrieved_los_mag_fields.pd',
-        'mapshift':-210,
+# PROPOSAL STAGE OSSE
+info = {'filename':path + '/../data/proposal_stage_sam_data/EZIE_event_simulation_ezie_simulation_case_1_look_direction_case_2_retrieved_los_mag_fields.pd',
+        'mhd_B_fn':path + '/../data/proposal_stage_mhd_data/gamera_dBs_Jfull_80km_2430',
+        'mapshift':-210, # Sam has shifted the MHD output by this amount to get an orbit that crosses something interesting. The shift must be applied to my MHD readout functions
         'observation_height':80,
         'output_path':'final_figs/',
-        'wshift':25}
+        'wshift':25,
+        'tm':dt.datetime(2023, 7, 3, 2, 42, 22),
+        'outputfn':'proposal_stage',
+        'mhdfunc':get_MHD_dB,
+        'clevels':np.linspace(-700, 700, 12)}
 
 
 
-SAMSHIFT = info['mapshift']
-OBSHEIGHT = info['observation_height']
 
 d2r = np.pi / 180
 
@@ -48,15 +54,15 @@ for i in range(4):
     _, _, data['dbe_measured_' + str(i)], data['dbn_measured_' + str(i)] = geo2mag(data['lat_' + str(i)].values, data['lon_' + str(i)].values, data['dbe_measured_' + str(i)].values, data['dbn_measured_' + str(i)].values, epoch = 2020)
 data['sat_lat'], data['sat_lon'] = geo2mag(data['sat_lat'].values, data['sat_lon'].values, epoch = 2020)
 
-# calculate SC velocity and add 
+# calculate SC velocity
 te, tn = spherical.tangent_vector(data['sat_lat'][:-1].values, data['sat_lon'][:-1].values,
                                   data['sat_lat'][1 :].values, data['sat_lon'][1: ].values)
 
-data.loc[:-1, 've'] = te
-data.loc[:-1, 'vn'] = tn
+data['ve'] = np.hstack((te, np.nan))
+data['vn'] = np.hstack((tn, np.nan))
 
 # choose a time:
-tm  = data.index[1*len(data.index)//5:4*len(data.index)//5:2][39]
+tm  = info['tm']
 
 
 t0 = data.index[data.index.get_loc(tm - dt.timedelta(seconds = DT//2 * 60), method = 'nearest')]
