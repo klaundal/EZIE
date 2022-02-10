@@ -14,14 +14,13 @@ reload(cases)
 d2r = np.pi / 180
 
 
-TRIM = True
-COMPONENT = 'U' # component to plot ('N', 'U', or 'E')
+PLOT_ALL = True # False to use the time segment in case file, True to plot everything
 
 info = cases.cases['case_1']
 
 
-
-pax = Polarsubplot(plt.subplots(nrows = 1, ncols = 1)[1])
+fig1, ax = plt.subplots(nrows = 1, ncols = 1)
+pax = Polarsubplot(ax)
 
 
 mlat, mlt = np.meshgrid(np.linspace(50, 90, 40*3), np.linspace(0, 24, 24*3))
@@ -35,14 +34,20 @@ data = pd.read_pickle(info['filename'])
 data = data[data.lat_1 > 50]
 #t0, t1 = data.index[0], data.index[-1]
 tm = info['tm']
-t0 = data.index[data.index.get_loc(tm - dt.timedelta(seconds = info['DT']//2 * 60), method = 'nearest')]
-t1 = data.index[data.index.get_loc(tm + dt.timedelta(seconds = info['DT']//2 * 60), method = 'nearest')]
+
+if PLOT_ALL:
+    t0 = data.index[0]
+    t1 = data.index[-1]
+else:
+    t0 = data.index[data.index.get_loc(tm - dt.timedelta(seconds = info['DT']//info['timeres'] * 60), method = 'nearest')]
+    t1 = data.index[data.index.get_loc(tm + dt.timedelta(seconds = info['DT']//info['timeres'] * 60), method = 'nearest')]
+
 
 
 # convert all geographic coordinates and vector components in data to geomagnetic:
 for i in range(4):
     i = i + 1
-    _, _, data['dbe_measured_' + str(i)], data['dbn_measured_' + str(i)] = geo2mag(data['lat_' + str(i)].values, data['lon_' + str(i)].values, data['dbe_measured_' + str(i)].values, data['dbn_measured_' + str(i)].values, epoch = 2020)
+    #_, _, data['dbe_measured_' + str(i)], data['dbn_measured_' + str(i)] = geo2mag(data['lat_' + str(i)].values, data['lon_' + str(i)].values, data['dbe_measured_' + str(i)].values, data['dbn_measured_' + str(i)].values, epoch = 2020)
     data['lat_' + str(i)], data['lon_' + str(i)], data['dbe_' + str(i)], data['dbn_' + str(i)] = geo2mag(data['lat_' + str(i)].values, data['lon_' + str(i)].values, data['dbe_' + str(i)].values, data['dbn_' + str(i)].values, epoch = 2020)
 data['sat_lat'], data['sat_lon'] = geo2mag(data['sat_lat'].values, data['sat_lon'].values, epoch = 2020)
 
@@ -79,25 +84,32 @@ for key in ['Be', 'Bn', 'Bu', 'Be_true', 'Bn_true', 'Bu_true', 'lat', 'lon']:
 
 
 for beam in [beam1, beam2, beam3, beam4]:
-    pax.plot(beam['lat'], (beam['lon'] - info['mapshift'] + 180)/15 + 1)
+    pax.plot(beam['lat'], (beam['lon'] + info['mapshift'] + 180)/15)
+
+fig1.savefig('./figures/' + info['outputfn'] + '_measurement_tracks_.png', dpi = 250)
+
 
 fig, axes = plt.subplots(nrows = 3, ncols = 4, figsize = (18, 9))
 for i, beam in enumerate((beam1, beam2, beam3, beam4)):
-    axes[0, i].plot(beam['lat'], beam['Bn'], label = 'measured')
-    axes[1, i].plot(beam['lat'], beam['Bu'])
-    axes[2, i].plot(beam['lat'], beam['Be'])
-    axes[0, i].plot(beam['lat'], beam['mhd_Bn'], label = 'MHD')
-    axes[1, i].plot(beam['lat'], beam['mhd_Bu'])
-    axes[2, i].plot(beam['lat'], beam['mhd_Be'])
-    axes[0, i].plot(beam['lat'], beam['Bn_true'], label = 'True')
-    axes[1, i].plot(beam['lat'], beam['Bu_true'])
-    axes[2, i].plot(beam['lat'], beam['Be_true'])
+    axes[0, i].plot(np.arange(beam['lat'].size), beam['Bn'], label = 'measured')
+    axes[1, i].plot(np.arange(beam['lat'].size), beam['Bu'])
+    axes[2, i].plot(np.arange(beam['lat'].size), beam['Be'])
+    axes[0, i].plot(np.arange(beam['lat'].size), beam['mhd_Bn'], label = 'MHD')
+    axes[1, i].plot(np.arange(beam['lat'].size), beam['mhd_Bu'])
+    axes[2, i].plot(np.arange(beam['lat'].size), beam['mhd_Be'])
+    axes[0, i].plot(np.arange(beam['lat'].size), beam['Bn_true'], label = 'True')
+    axes[1, i].plot(np.arange(beam['lat'].size), beam['Bu_true'])
+    axes[2, i].plot(np.arange(beam['lat'].size), beam['Be_true'])
     axes[0, i].set_title('Beam ' + str(i + 1) + ', Bn')
     axes[1, i].set_title('Beam ' + str(i + 1) + ', Bu')
     axes[2, i].set_title('Beam ' + str(i + 1) + ', Be')
 
     if i == 0:
         axes[0, i].legend(frameon = True)
+
+
+fig.savefig('./figures/' + info['outputfn'] + '_mhd_osse_comparison_.png', dpi = 250)
+
 
 
 """

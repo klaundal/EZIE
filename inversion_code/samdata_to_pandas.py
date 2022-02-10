@@ -13,17 +13,19 @@ path = os.path.dirname(__file__)
 fn = path + '/../data/proposal_stage_sam_data/EZIE_event_simulation_ezie_simulation_case_1_look_direction_case_2_retrieved_los_mag_fields.sav'
 
 # case 1:
-fn = path + '/../data/OSSE_new/case_1/EZIE_event_simulation_CASE1_standard_EZIE_retrieved_los_mag_fields2.sav'
+fn = path + '/../data/OSSE_new/case_1/EZIE_event_simulation_CASE1_standard_EZIE_retrieved_los_mag_fields.sav'
 
 # case 2:
-fn = path + '/../data/OSSE_new/case_2/EZIE_event_simulation_CASE2_standard_EZIE_retrieved_los_mag_fields2.sav'
+fn = path + '/../data/OSSE_new/case_2/EZIE_event_simulation_CASE2_standard_EZIE_retrieved_los_mag_fields.sav'
 
 # case 3:
-fn = path + '/../data/OSSE_new/case_3/EZIE_event_simulation_CASE3_standard_EZIE_retrieved_los_mag_fields2.sav'
+fn = path + '/../data/OSSE_new/case_3/EZIE_event_simulation_CASE3_standard_EZIE_retrieved_los_mag_fields.sav'
 
 # case 4:
-fn = path + '/../data/OSSE_new/case_4/EZIE_event_simulation_CASE4_standard_EZIE_retrieved_los_mag_fields2.sav'
+fn = path + '/../data/OSSE_new/case_4/EZIE_event_simulation_CASE4_standard_EZIE_retrieved_los_mag_fields.sav'
 
+# case 5:
+fn = path + '/../data/OSSE_new/case_5/EZIE_event_simulation_CASE5_standard_EZIE_retrieved_los_mag_fields.sav'
 
 
 idldata = readsav(fn)

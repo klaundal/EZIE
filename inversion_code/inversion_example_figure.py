@@ -12,7 +12,7 @@ import cases
 from importlib import reload
 reload(cases) 
 
-info = cases.cases['case_4']
+info = cases.cases['case_1']
 
 OBSHEIGHT = info['observation_height']
 
@@ -21,6 +21,7 @@ d2r = np.pi / 180
 LRES = 40. # spatial resolution of SECS grid along satellite track
 WRES = 20. # spatial resolution perpendicular to satellite tarck
 wshift = info['wshift'] # shift center of grid wshift km to the right of the satellite (rel to velocity)
+timeres = info['timeres']
 DT  = info['DT'] # size of time window [min]
 RI  = (6371.2 + 110) * 1e3 # SECS height (m)
 RE  = 6371.2e3
@@ -30,9 +31,11 @@ data = pd.read_pickle(info['filename'])
 # convert all geographic coordinates and vector components in data to geomagnetic:
 for i in range(4):
     i = i + 1
-    _, _, data['dbe_measured_' + str(i)], data['dbn_measured_' + str(i)] = geo2mag(data['lat_' + str(i)].values, data['lon_' + str(i)].values, data['dbe_measured_' + str(i)].values, data['dbn_measured_' + str(i)].values, epoch = 2020)
+    #_, _, data['dbe_measured_' + str(i)], data['dbn_measured_' + str(i)] = geo2mag(data['lat_' + str(i)].values, data['lon_' + str(i)].values, data['dbe_measured_' + str(i)].values, data['dbn_measured_' + str(i)].values, epoch = 2020)
+    #data['lat_' + str(i)], data['lon_' + str(i)], data['dbe_' + str(i)], data['dbn_' + str(i)] = geo2mag(data['lat_' + str(i)].values, data['lon_' + str(i)].values, data['dbe_' + str(i)].values, data['dbn_' + str(i)].values, epoch = 2020)
     data['lat_' + str(i)], data['lon_' + str(i)], data['dbe_' + str(i)], data['dbn_' + str(i)] = geo2mag(data['lat_' + str(i)].values, data['lon_' + str(i)].values, data['dbe_' + str(i)].values, data['dbn_' + str(i)].values, epoch = 2020)
 data['sat_lat'], data['sat_lon'] = geo2mag(data['sat_lat'].values, data['sat_lon'].values, epoch = 2020)
+#data['sat_lon']+=180
 
 # calculate SC velocity
 te, tn = spherical.tangent_vector(data['sat_lat'][:-1].values, data['sat_lon'][:-1].values,
@@ -45,8 +48,8 @@ data['vn'] = np.hstack((tn, np.nan))
 tm = info['tm']
 
 # limits of analysis interval:
-t0 = data.index[data.index.get_loc(tm - dt.timedelta(seconds = DT//2 * 60), method = 'nearest')]
-t1 = data.index[data.index.get_loc(tm + dt.timedelta(seconds = DT//2 * 60), method = 'nearest')]
+t0 = data.index[data.index.get_loc(tm - dt.timedelta(seconds = DT//timeres * 60), method = 'nearest')]
+t1 = data.index[data.index.get_loc(tm + dt.timedelta(seconds = DT//timeres * 60), method = 'nearest')]
 
 # get unit vectors pointing at satellite (Cartesian vectors)
 rs = []
@@ -56,8 +59,8 @@ for t in [t0, tm, t1]:
                         np.sin(data.loc[t, 'sat_lat'] * d2r)]))
 
 # dimensions of analysis region/grid (in km)
-W = 400 + RI * np.arccos(np.sum(rs[0]*rs[-1])) * 1e-3 # km
-L = 1200
+W = 600 + RI * np.arccos(np.sum(rs[0]*rs[-1])) * 1e-3 # km
+L = 1400
 print(L, W)
 
 # set up the cubed sphere projection
