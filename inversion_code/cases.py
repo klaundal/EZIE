@@ -47,7 +47,7 @@ cases['case_2'] = {'filename':path + '/../data/OSSE_new/case_2/EZIE_event_simula
         'outputfn':'osse_case2',
         'timeres':3,
         'mhdfunc':get_MHD_dB_new,
-        'clevels':np.linspace(-300, 300, 12),
+        'clevels':np.linspace(-500, 500, 12),
         'DT':6,
         'signs':[-1, -1, 1]} # multiply the OSSE components by this number to get consistent results (east, north up)
 
@@ -91,7 +91,7 @@ cases['case_5'] = {'filename':path + '/../data/OSSE_new/case_5/EZIE_event_simula
         'wshift':25,
         'timeres':3,
         'tm':dt.datetime(2023, 7, 4, 12, 22, 13),
-        'outputfn':'osse_case4',
+        'outputfn':'osse_case5',
         'mhdfunc':get_MHD_dB_new,
         'clevels':np.linspace(-300, 300, 12),
         'DT':6,
