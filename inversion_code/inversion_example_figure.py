@@ -3,16 +3,19 @@ import datetime as dt
 from secsy import get_SECS_B_G_matrices, get_SECS_J_G_matrices, CSgrid, CSprojection
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
-from dipole import geo2mag
+from dipole import Dipole
 from secsy import spherical 
 from simulation_utils import get_MHD_jeq, get_MHD_dB, get_MHD_dB_new
 import pandas as pd
 import os
 import cases
+import new_cases
 from importlib import reload
 reload(cases) 
 
 info = cases.cases['case_1']
+#info = new_cases.cases['case_1_mlt_05']
+dpl = Dipole(2020)
 
 OBSHEIGHT = info['observation_height']
 
@@ -33,8 +36,8 @@ for i in range(4):
     i = i + 1
     #_, _, data['dbe_measured_' + str(i)], data['dbn_measured_' + str(i)] = geo2mag(data['lat_' + str(i)].values, data['lon_' + str(i)].values, data['dbe_measured_' + str(i)].values, data['dbn_measured_' + str(i)].values, epoch = 2020)
     #data['lat_' + str(i)], data['lon_' + str(i)], data['dbe_' + str(i)], data['dbn_' + str(i)] = geo2mag(data['lat_' + str(i)].values, data['lon_' + str(i)].values, data['dbe_' + str(i)].values, data['dbn_' + str(i)].values, epoch = 2020)
-    data['lat_' + str(i)], data['lon_' + str(i)], data['dbe_' + str(i)], data['dbn_' + str(i)] = geo2mag(data['lat_' + str(i)].values, data['lon_' + str(i)].values, data['dbe_' + str(i)].values, data['dbn_' + str(i)].values, epoch = 2020)
-data['sat_lat'], data['sat_lon'] = geo2mag(data['sat_lat'].values, data['sat_lon'].values, epoch = 2020)
+    data['lat_' + str(i)], data['lon_' + str(i)], data['dbe_' + str(i)], data['dbn_' + str(i)] = dpl.geo2mag(data['lat_' + str(i)].values, data['lon_' + str(i)].values, data['dbe_' + str(i)].values, data['dbn_' + str(i)].values)
+data['sat_lat'], data['sat_lon'] = dpl.geo2mag(data['sat_lat'].values, data['sat_lon'].values)
 #data['sat_lon']+=180
 
 # calculate SC velocity
@@ -45,7 +48,7 @@ data['ve'] = np.hstack((te, np.nan))
 data['vn'] = np.hstack((tn, np.nan))
 
 # get index of central point of analysis interval:
-tm = info['tm']
+tm = data.index[data.index.get_loc(info['tm'], method = 'nearest')]
 
 # limits of analysis interval:
 t0 = data.index[data.index.get_loc(tm - dt.timedelta(seconds = DT//timeres * 60), method = 'nearest')]
@@ -112,7 +115,7 @@ d = np.hstack((obs['Be'], obs['Bn'], obs['Bu']))
 GTQG = G.T.dot(Q).dot(G)
 GTQd = G.T.dot(Q).dot(d)
 scale = np.max(GTQG)
-R = np.eye(GTQG.shape[0]) * scale*1e0 + LL / np.abs(LL).max() * scale * 1e3 
+R = np.eye(GTQG.shape[0]) * scale*1e0 + LL / np.abs(LL).max() * scale * 1e3
 
 SS = np.linalg.inv(GTQG + R).dot(G.T.dot(Q))
 m = SS.dot(d).flatten()
@@ -121,7 +124,7 @@ m = np.ravel(m)
 #RR = np.linalg.inv(GTQG + R).dot(GTQG + R) # model resolution matrix
 
 
-fig = plt.figure(figsize = (6, 17))
+fig = plt.figure(figsize = (6, 14))
 axe_true      = plt.subplot2grid((16, 2), (0 , 0), rowspan = 5)
 axe_secs      = plt.subplot2grid((16, 2), (0 , 1), rowspan = 5)
 axn_true      = plt.subplot2grid((16, 2), (5 , 0), rowspan = 5)
@@ -133,22 +136,12 @@ ax_cbar = plt.subplot2grid((33, 2), (32, 0), colspan = 2)
 
 
 # plot the data tracks:
-ximin, ximax, etamin, etamax = 0, 0, 0, 0 # plot limits
 for i in range(4):
 
     lon, lat = data.loc[t0:t1, 'lon_' + str(i + 1)].values, data.loc[t0:t1, 'lat_' + str(i + 1)].values
     xi, eta = projection.geo2cube(lon, lat)
     for ax in [axe_secs, axn_secs, axr_secs]:
         ax.plot(xi, eta, color = 'C' + str(i), linewidth = 3)
-    else:
-        if eta.min() < etamin:
-            etamin = eta.min()
-        if eta.max() > etamax:
-            etamax = eta.max()
-        if xi.min() < ximin:
-            ximin = xi.min()
-        if xi.max() > ximax:
-            ximax = xi.max()
 
 
 # set up G matrices for the magnetic field evaluated on a grid - for plotting maps
@@ -226,7 +219,7 @@ for ax in [axe_secs, axe_true, axn_secs, axn_true, axr_secs, axr_true]:
 for ax, label in zip([axe_secs, axe_true, axn_secs, axn_true, axr_secs, axr_true],
                      ['Be SECS', 'Be MHD', 'Bn SECS', 'Bn MHD', 'Br SECS', 'Br MHD']):
     
-    ax.text(ximin - 25/(RI * 1e-3), etamax - 25/(RI * 1e-3), label, va = 'top', ha = 'left', bbox = dict(facecolor='white', alpha=1), zorder = 101, size = 14)
+    ax.text(grid.xi.min() - 25/(RI * 1e-3), grid.eta.max() - 25/(RI * 1e-3), label, va = 'top', ha = 'left', bbox = dict(facecolor='white', alpha=1), zorder = 101, size = 14)
 
 
 # plot grid in top left panel to show spatial dimensions:
@@ -239,8 +232,8 @@ for j in range(xigrid.shape[1]):
 
 # set plot limits:
 for ax in [axe_secs, axe_true, axn_secs, axn_true, axr_secs, axr_true]:
-    ax.set_xlim(ximin - 25/(RI * 1e-3), ximax + 25/(RI * 1e-3))
-    ax.set_ylim(etamin + 55/(RI * 1e-3), etamax - 55/(RI * 1e-3))
+    ax.set_xlim(grid.xi.min(), grid.xi.max())
+    ax.set_ylim(grid.eta.min(), grid.eta.max())
     ax.set_adjustable('datalim') 
     ax.set_aspect('equal')
 

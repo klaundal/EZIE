@@ -18,7 +18,6 @@ reload(cases)
 timestep = 30 # time resolution of maps - also the length of the central portion
 
 
-
 info = cases.cases['case_5']
 
 OBSHEIGHT = info['observation_height']

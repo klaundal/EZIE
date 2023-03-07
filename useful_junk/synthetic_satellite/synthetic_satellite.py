@@ -144,7 +144,7 @@ def get_observation_points(r, theta, phi, v, alphas = [45, -5, -25, -45], h = 85
         v must be (N, 3)
         r, theta, phi must be (N)
 
-        returns lat, lon of the observation points - shapes are (len(alphas), len(r))
+        returns lon, lat of the observation points - shapes are (len(alphas), len(r))
 
     """
     v = (v.T / np.linalg.norm(v, axis = 1)).T #normalize
