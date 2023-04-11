@@ -7,9 +7,9 @@ path = os.path.dirname(__file__)
 cases = {}
 
 # PROPOSAL STAGE OSSE
-cases['proposal_stage'] = {'filename':path + '/../data/proposal_stage_sam_data/EZIE_event_simulation_ezie_simulation_case_1_look_direction_case_2_retrieved_los_mag_fields.pd',
-        'mhd_B_fn':path + '/../data/proposal_stage_mhd_data/gamera_dBs_Jfull_80km_2430',
-        'mapshift':-210, # Sam has shifted the MHD output by this amount to get an orbit that crosses something interesting. The shift must be applied to my MHD readout functions
+cases['proposal_stage'] = {'filename':path + '/data/proposal_stage_sam_data/EZIE_event_simulation_ezie_simulation_case_1_look_direction_case_2_retrieved_los_mag_fields.pd',
+        'mhd_B_fn':path + '/data/proposal_stage_mhd_data/gamera_dBs_Jfull_80km_2430',
+        'mapshift':-210, # The MHD output was shifted by this amount when making synthetic data. The shift must be applied to my MHD readout functions
         'observation_height':80,
         'output_path':'final_figs/',
         'wshift':25,
@@ -22,9 +22,9 @@ cases['proposal_stage'] = {'filename':path + '/../data/proposal_stage_sam_data/E
 
 
 # OSSE CASE 1
-cases['case_1'] = {'filename':path + '/../data/OSSE_new/case_1/EZIE_event_simulation_CASE1_standard_EZIE_retrieved_los_mag_fields.pd',
-        'mhd_B_fn':path + '/../data/OSSE_new/case_1/gamera_dBs_80km_2016-08-09T08_49_45.txt',
-        'mapshift':0, # Sam has shifted the MHD output by this amount to get an orbit that crosses something interesting. The shift must be applied to my MHD readout functions
+cases['case_1'] = {'filename':path + '/data/OSSE_new/case_1/EZIE_event_simulation_CASE1_standard_EZIE_retrieved_los_mag_fields.pd',
+        'mhd_B_fn':path + '/data/OSSE_new/case_1/gamera_dBs_80km_2016-08-09T08_49_45.txt',
+        'mapshift':0, # The MHD output was shifted by this amount when making synthetic data. The shift must be applied to my MHD readout functions
         'observation_height':80,
         'output_path':'final_figs/',
         'wshift':25,
@@ -37,9 +37,9 @@ cases['case_1'] = {'filename':path + '/../data/OSSE_new/case_1/EZIE_event_simula
         'signs':[-1, -1, 1]} # multiply the OSSE components by this number to get consistent results (east, north up)
 
 # OSSE CASE 2
-cases['case_2'] = {'filename':path + '/../data/OSSE_new/case_2/EZIE_event_simulation_CASE2_standard_EZIE_retrieved_los_mag_fields.pd',
-        'mhd_B_fn':path + '/../data/OSSE_new/case_2/gamera_dBs_80km_2016-08-09T09_17_52.txt',
-        'mapshift':0, # Sam has shifted the MHD output by this amount to get an orbit that crosses something interesting. The shift must be applied to my MHD readout functions
+cases['case_2'] = {'filename':path + '/data/OSSE_new/case_2/EZIE_event_simulation_CASE2_standard_EZIE_retrieved_los_mag_fields.pd',
+        'mhd_B_fn':path + '/data/OSSE_new/case_2/gamera_dBs_80km_2016-08-09T09_17_52.txt',
+        'mapshift':0, # The MHD output was shifted by this amount when making synthetic data. The shift must be applied to my MHD readout functions
         'observation_height':80,
         'output_path':'final_figs/',
         'wshift':25,
@@ -52,9 +52,9 @@ cases['case_2'] = {'filename':path + '/../data/OSSE_new/case_2/EZIE_event_simula
         'signs':[-1, -1, 1]} # multiply the OSSE components by this number to get consistent results (east, north up)
 
 # OSSE CASE 3
-cases['case_3'] = {'filename':path + '/../data/OSSE_new/case_3/EZIE_event_simulation_CASE3_standard_EZIE_retrieved_los_mag_fields.pd',
-        'mhd_B_fn':path + '/../data/OSSE_new/case_3/gamera_dBs_80km_2016-08-09T09_24_22.txt',
-        'mapshift':0, # Sam has shifted the MHD output by this amount to get an orbit that crosses something interesting. The shift must be applied to my MHD readout functions
+cases['case_3'] = {'filename':path + '/data/OSSE_new/case_3/EZIE_event_simulation_CASE3_standard_EZIE_retrieved_los_mag_fields.pd',
+        'mhd_B_fn':path + '/data/OSSE_new/case_3/gamera_dBs_80km_2016-08-09T09_24_22.txt',
+        'mapshift':0, # The MHD output was shifted by this amount when making synthetic data. The shift must be applied to my MHD readout functions
         'observation_height':80,
         'output_path':'final_figs/',
         'wshift':25,
@@ -67,9 +67,9 @@ cases['case_3'] = {'filename':path + '/../data/OSSE_new/case_3/EZIE_event_simula
         'signs':[-1, -1, 1]} # multiply the OSSE components by this number to get consistent results (east, north up)
 
 # OSSE CASE 4
-cases['case_4'] = {'filename':path + '/../data/OSSE_new/case_4/EZIE_event_simulation_CASE4_standard_EZIE_retrieved_los_mag_fields.pd',
-        'mhd_B_fn':path + '/../data/OSSE_new/case_4/gamera_dBs_80km_2016-08-09T09_38_29.txt',
-        'mapshift':0, # Sam has shifted the MHD output by this amount to get an orbit that crosses something interesting. The shift must be applied to my MHD readout functions
+cases['case_4'] = {'filename':path + '/data/OSSE_new/case_4/EZIE_event_simulation_CASE4_standard_EZIE_retrieved_los_mag_fields.pd',
+        'mhd_B_fn':path + '/data/OSSE_new/case_4/gamera_dBs_80km_2016-08-09T09_38_29.txt',
+        'mapshift':0, # The MHD output was shifted by this amount when making synthetic data. The shift must be applied to my MHD readout functions
         'observation_height':80,
         'output_path':'final_figs/',
         'wshift':25,
@@ -83,9 +83,9 @@ cases['case_4'] = {'filename':path + '/../data/OSSE_new/case_4/EZIE_event_simula
 
 
 # OSSE CASE 4
-cases['case_5'] = {'filename':path + '/../data/OSSE_new/case_5/EZIE_event_simulation_CASE5_standard_EZIE_retrieved_los_mag_fields.pd',
-        'mhd_B_fn':path + '/../data/OSSE_new/case_4/gamera_dBs_80km_2016-08-09T09_38_29.txt',
-        'mapshift':0, # Sam has shifted the MHD output by this amount to get an orbit that crosses something interesting. The shift must be applied to my MHD readout functions
+cases['case_5'] = {'filename':path + '/data/OSSE_new/case_5/EZIE_event_simulation_CASE5_standard_EZIE_retrieved_los_mag_fields.pd',
+        'mhd_B_fn':path + '/data/OSSE_new/case_4/gamera_dBs_80km_2016-08-09T09_38_29.txt',
+        'mapshift':0, # The MHD output was shifted by this amount when making synthetic data. The shift must be applied to my MHD readout functions
         'observation_height':80,
         'output_path':'final_figs/',
         'wshift':25,
