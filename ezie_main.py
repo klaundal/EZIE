@@ -11,6 +11,8 @@ import datetime as dt
 
 from secsy import spherical 
 from dipole import Dipole # https://github.com/klaundal/dipole
+from apexpy import Apex
+import pyamps
 
 import os
 os.chdir('/scratch/BCSS-DAG Dropbox/Michael Madelaire/computer/UiB/EZIE_code/EZIE')
@@ -64,9 +66,6 @@ sc_lat0 = data.loc[tm, 'sat_lat']
 sc_lon0 = data.loc[tm, 'sat_lon']
 
 # limits of analysis interval:
-    # Bullshit
-#t0 = data.index[data.index.get_loc(tm - dt.timedelta(seconds = DT//timeres * 60), method = 'nearest')]
-#t1 = data.index[data.index.get_loc(tm + dt.timedelta(seconds = DT//timeres * 60), method = 'nearest')]
 t0 = data.index[data.index.get_loc(tm - dt.timedelta(seconds = DT/2*60), method = 'nearest')]
 t1 = data.index[data.index.get_loc(tm + dt.timedelta(seconds = DT/2*60), method = 'nearest')]
 
@@ -152,7 +151,7 @@ print(grid.lat[m_id//grid.shape[1], m_id%grid.shape[1]])
 #%% Lambda relation
 
 # Stuff
-gini_load = ''
+gini_load = '/scratch//BCSS-DAG Dropbox/Michael Madelaire/computer/UiB/EZIE_code/EZIE/gini_case_2.pkl'
 gini_save = '/scratch//BCSS-DAG Dropbox/Michael Madelaire/computer/UiB/EZIE_code/EZIE/gini_case_2.pkl'
 plot_summary = True
 
@@ -291,15 +290,340 @@ plt.ion()
 
 #%% Run with model variance and resolution
 
-inv_result = ezl.standard_retrieval(obs, t0, sc_lon0, sc_lat0, v[0], v[1], 
-                                    map_params, get_f1, reg_params,
-                                    PD = [],
-                                    plot_dir='/scratch/BCSS-DAG Dropbox/Michael Madelaire/computer/UiB/EZIE_code/EZIE/figure', 
-                                    plot_name='ezl')
+inv_result, grid = ezl.standard_retrieval(obs, t0, sc_lon0, sc_lat0, v[0], v[1], 
+                                          map_params, get_f1, reg_params,
+                                          PD = [],
+                                          plot_dir='/scratch/BCSS-DAG Dropbox/Michael Madelaire/computer/UiB/EZIE_code/EZIE/figure', 
+                                          plot_name='ezl')
 
-inv_result = ezl.standard_retrieval(obs, t0, sc_lon0, sc_lat0, v[0], v[1], 
-                                    map_params, get_f1, reg_params,
-                                    PD = [PD_xi, PD_eta],
-                                    plot_dir='/scratch/BCSS-DAG Dropbox/Michael Madelaire/computer/UiB/EZIE_code/EZIE/figure', 
-                                    plot_name='ezl_PD')
+inv_result, grid = ezl.standard_retrieval(obs, t0, sc_lon0, sc_lat0, v[0], v[1], 
+                                          map_params, get_f1, reg_params,
+                                          PD = [PD_xi, PD_eta],
+                                          plot_dir='/scratch/BCSS-DAG Dropbox/Michael Madelaire/computer/UiB/EZIE_code/EZIE/figure', 
+                                          plot_name='ezl_PD')
+
+#%% Data product - Solution (from which all else can be derived)
+
+data_product = {}
+
+# Model parameters (SECS amplitudes)
+data_product['m'] = inv_result['m']
+
+# Coordinates of the SECS pole locations - in geocentric coordinates (!)
+data_product['geoclat_secs'] = grid.lat
+data_product['geoclon_secs'] = grid.lon
+data_product['radius_secs'] = np.ones(grid.shape)*map_params['RI']
+
+# Posterior model covariance matrix
+data_product['Cpm'] = inv_result['Cpm']
+
+# Spatial resolution in cross-track and along-track directions
+xi_FWHM, eta_FWHM, xi_flag, eta_flag = ezl.get_resolution(inv_result['R'], grid)
+ef = (xi_flag==1) & (eta_flag==1)
+data_product['xi_FWHM'] = xi_FWHM # cross-track resolution
+data_product['eta_FWHM'] = eta_FWHM # along-track resolution
+
+# Quality flags (0, 1, 2)
+data_product['quality_flag'] = quality_flag
+
+# Central time an size of time window
+data_product['central_time'] = tm
+
+# Config parameters: Regularization, ionosphere radius, code version
+data_product['regularization'] = reg_params
+data_product['map_parameters'] = map_params
+
+#%% Data product - Gridded quantities (calculated at offset grid)
+
+# Electrojet / equivalent current components [mA/m] in geocentric (!) east and north directions
+Ge, Gn = ezl.get_SECS_J_G_matrices(grid.lat_mesh, grid.lon_mesh, 
+                                   grid.lat.flatten(), grid.lon.flatten(), 
+                                   current_type='divergence_free', RI=map_params['RI'])
+
+data_product['Je'] = Ge.dot(inv_result['m'])
+data_product['Jn'] = Gn.dot(inv_result['m'])
+data_product['Je_std'] = np.sqrt(np.diag(Ge.dot(data_product['Cpm']).dot(Ge.T)))
+data_product['Jn_std'] = np.sqrt(np.diag(Gn.dot(data_product['Cpm']).dot(Gn.T)))
+data_product['geoclat_J'] = grid.lat_mesh.flatten() # geocentric latitude
+data_product['lon_J'] = grid.lon_mesh.flatten() # geocentric longitude (the same as geodetic longitude)
+data_product['r_J'] = np.ones(grid.xi_mesh.size)*map_params['RI'] # Radius of the ionospheric shell
+
+# Be, Bn, Bu [nT] at h=80 km - geodetic coordinates
+#       Convert from geodetic to geocentric 
+#       We need the magnetic field at a constant height over the ellipsoid, not constant radius from the center
+theta, r, _, _ = ezl.geod2geoc(grid.lat_mesh.flatten(), 
+                               np.ones(grid.xi_mesh.size)*info['observation_height'], 
+                               np.ones(grid.xi_mesh.size), 
+                               np.ones(grid.xi_mesh.size))
+geoclat_80 = 90 - theta # 
+radius_80 = r*1e3
+
+#       Calculate magnetic field in geocentric
+Ge, Gn, Gu = ezl.get_SECS_B_G_matrices(geoclat_80, grid.lon_mesh.flatten(), radius_80, 
+                                       grid.lat.flatten(), grid.lon.flatten(), current_type='divergence_free', RI=map_params['RI'])
+
+Be_geoc_80 = Ge.dot(inv_result['m'])
+Bn_geoc_80 = Gn.dot(inv_result['m'])
+Btheta_geoc_80 = -Bn_geoc_80
+Bu_geoc_80 = Gu.dot(inv_result['m'])
+
+#       Convert from geocentric to geodetic
+gdlat, height, Bn, Bu = ezl.geoc2geod(theta, r, Btheta_geoc_80, Bu_geoc_80)
+
+#       Calculate magnetic field model variance in geocentric
+Be_geoc_80_sig = np.sqrt(np.diag(Ge.dot(data_product['Cpm']).dot(Ge.T)))
+Bn_geoc_80_sig = np.sqrt(np.diag(Gn.dot(data_product['Cpm']).dot(Gn.T)))
+Bu_geoc_80_sig = np.sqrt(np.diag(Gu.dot(data_product['Cpm']).dot(Gu.T)))
+
+#       Convert from geocentric to geodetic
+#       Rotate individual 3D vector covariance matrices from and grab sqrt of the diagonal
+Be_geod_80_sig = np.zeros(Ge.shape[0])
+Bn_geod_80_sig = np.zeros(Ge.shape[0])
+Bu_geod_80_sig = np.zeros(Ge.shape[0])
+B_Cpm_geod_80 = np.zeros((3, 3, Ge.shape[0]))
+for i in range(Ge.shape[0]):
+    G_i = np.vstack((Ge[i, :], Gn[i, :], Gu[i, :]))
+    B_Cpm_geoc_i = G_i.dot(data_product['Cpm']).dot(G_i.T)
+    _, _, T = ezl.geoc2geod(theta[i], r[i], [], [], matrix=True)
+    B_Cpm_geod_i = T.dot(B_Cpm_geoc_i).dot(T.T)
+    B_Cpm_geod_80[:, :, i] = B_Cpm_geod_i
+    Be_geod_80_sig[i] = np.sqrt(B_Cpm_geod_i[0, 0])
+    Bn_geod_80_sig[i] = np.sqrt(B_Cpm_geod_i[1, 1])
+    Bu_geod_80_sig[i] = np.sqrt(B_Cpm_geod_i[2, 2])
+
+data_product['geodlat_80'] = gdlat
+data_product['lon_80'] = grid.lon_mesh.flatten()
+data_product['height_80'] = np.ones(gdlat.shape)*8e4 # meters above ellipsoide
+data_product['Be_geod_80'] = Be_geoc_80
+data_product['Bn_geod_80'] = Bn
+data_product['Bu_geod_80'] = Bu
+data_product['Be_geod_std_80'] = Be_geod_80_sig
+data_product['Bn_geod_std_80'] = Bn_geod_80_sig
+data_product['Bu_geod_std_80'] = Bu_geod_80_sig
+
+
+# Be, Bn, Bu [nT] at h=0 km - geodetic coordinates
+#       Convert from geodetic to geocentric 
+theta, r, _, _ = ezl.geod2geoc(grid.lat_mesh.flatten(), 
+                               np.ones(grid.xi_mesh.size)*0, 
+                               np.ones(grid.xi_mesh.size), 
+                               np.ones(grid.xi_mesh.size))
+geoclat_0 = 90 - theta # 
+radius_0 = r*1e3
+
+#       Calculate magnetic field in geocentric
+Ge, Gn, Gu = ezl.get_SECS_B_G_matrices(geoclat_0, grid.lon_mesh.flatten(), radius_0, 
+                                       grid.lat.flatten(), grid.lon.flatten(), current_type='divergence_free', RI=map_params['RI'])
+
+Be_geoc_0 = Ge.dot(inv_result['m'])
+Bn_geoc_0 = Gn.dot(inv_result['m'])
+Btheta_geoc_0 = -Bn_geoc_0
+Bu_geoc_0 = Gu.dot(inv_result['m'])
+
+#       Convert from geocentric to geodetic
+gdlat, height, Bn, Bu = ezl.geoc2geod(theta, r, Btheta_geoc_0, Bu_geoc_0)
+
+#       Calculate magnetic field model variance in geocentric
+Be_geoc_0_sig = np.sqrt(np.diag(Ge.dot(data_product['Cpm']).dot(Ge.T)))
+Bn_geoc_0_sig = np.sqrt(np.diag(Gn.dot(data_product['Cpm']).dot(Gn.T)))
+Bu_geoc_0_sig = np.sqrt(np.diag(Gu.dot(data_product['Cpm']).dot(Gu.T)))
+
+#       Convert from geocentric to geodetic
+#       Rotate individual 3D vector covariance matrices from and grab sqrt of the diagonal
+Be_geod_0_sig = np.zeros(Ge.shape[0])
+Bn_geod_0_sig = np.zeros(Ge.shape[0])
+Bu_geod_0_sig = np.zeros(Ge.shape[0])
+B_Cpm_geod_0 = np.zeros((3, 3, Ge.shape[0]))
+for i in range(Ge.shape[0]):
+    G_i = np.vstack((Ge[i, :], Gn[i, :], Gu[i, :]))
+    B_Cpm_geoc_i = G_i.dot(data_product['Cpm']).dot(G_i.T)
+    _, _, T = ezl.geoc2geod(theta[i], r[i], [], [], matrix=True)
+    B_Cpm_geod_i = T.dot(B_Cpm_geoc_i).dot(T.T)
+    B_Cpm_geod_0[:, :, i] = B_Cpm_geod_i
+    Be_geod_0_sig[i] = np.sqrt(B_Cpm_geod_i[0, 0])
+    Bn_geod_0_sig[i] = np.sqrt(B_Cpm_geod_i[1, 1])
+    Bu_geod_0_sig[i] = np.sqrt(B_Cpm_geod_i[2, 2])
+
+data_product['geodlat_0'] = gdlat
+data_product['lon_0'] = grid.lon_mesh.flatten()
+data_product['height_0'] = np.ones(gdlat.shape)*0 # meters above ellipsoide
+data_product['Be_geod_0'] = Be_geoc_0
+data_product['Bn_geod_0'] = Bn
+data_product['Bu_geod_0'] = Bu
+data_product['Be_geod_std_0'] = Be_geod_0_sig
+data_product['Bn_geod_std_0'] = Bn_geod_0_sig
+data_product['Bu_geod_std_0'] = Bu_geod_0_sig
+
+
+# The same parameters in QD coordinates @ 80 km
+#       Initiate the apex object with the date at the center measurement
+date = dt.datetime(tm.year, tm.month, tm.day, tm.hour, tm.minute)
+apex = Apex(date)
+
+#       Calculate the QD basevector for h=80 km
+f1, f2 = apex.basevectors_qd(data_product['geodlat_80'], grid.lon_mesh.flatten(), 
+                             np.ones(grid.xi_mesh.size)*info['observation_height'])
+
+#       Columnwise cross-product
+F = f1[0, :] * f2[1, :] - f1[1, :] * f2[0, :]
+
+#       Transform B from geodetic to quasi-dipole (QD)
+Be_qd_80 = (f1[0, :]*data_product['Be_geod_80'] + f1[1, :]*data_product['Bn_geod_80'])/F
+Bn_qd_80 = (f2[0, :]*data_product['Be_geod_80'] + f2[1, :]*data_product['Bn_geod_80'])/F
+Br_qd_80 = data_product['Bu_geod_80']/np.sqrt(F)
+data_product['Be_QD_80'] = Be_qd_80
+data_product['Bn_QD_80'] = Bn_qd_80
+data_product['Bu_QD_80'] = Br_qd_80
+
+#       Transform B sigma from geodetic to quasi-dipole (QD)
+Be_qd_80_sig = np.zeros(Ge.shape[0])
+Bn_qd_80_sig = np.zeros(Ge.shape[0])
+Bu_qd_80_sig = np.zeros(Ge.shape[0])
+for i in range(f1.shape[1]):
+    T = np.array([[f1[0, i]/F[i], f1[1, i]/F[i], 0],
+                  [f2[0, i]/F[i], f2[1, i]/F[i], 0],
+                  [0, 0, 1/np.sqrt(F[i])]])
+    B_Cpm_qd_i = T.dot(B_Cpm_geod_80[:, :, i]).dot(T.T)
+    Be_qd_80_sig[i] = np.sqrt(B_Cpm_qd_i[0, 0])
+    Bn_qd_80_sig[i] = np.sqrt(B_Cpm_qd_i[1, 1])
+    Bu_qd_80_sig[i] = np.sqrt(B_Cpm_qd_i[2, 2])
+
+data_product['Be_QD_std_80'] = Be_qd_80_sig
+data_product['Bn_QD_std_80'] = Bn_qd_80_sig
+data_product['Bu_QD_std_80'] = Bu_qd_80_sig
+
+#       Transform coords from geodetic to quasi-dipole (QD)
+QDlat_80, QDlon_80 = apex.geo2qd(data_product['geodlat_80'], grid.lon_mesh.flatten(), 
+                                 np.ones(grid.xi_mesh.size)*info['observation_height'])
+data_product['QD_lat_80'] = QDlat_80
+data_product['QD_lon_80'] = QDlon_80
+
+# The same parameters in QD coordinates @ 0 km
+#       Calculate the QD basevector for h=0 km
+f1, f2 = apex.basevectors_qd(data_product['geodlat_0'], grid.lon_mesh.flatten(), 
+                             np.ones(grid.xi_mesh.size)*0)
+
+#       Columnwise cross-product
+F = f1[0, :] * f2[1, :] - f1[1, :] * f2[0, :]
+
+#       Transform from geodetic to quasi-dipole (QD)
+Be_qd_0 = (f1[0, :]*data_product['Be_geod_0'] + f1[1, :]*data_product['Bn_geod_0'])/F
+Bn_qd_0 = (f2[0, :]*data_product['Be_geod_0'] + f2[1, :]*data_product['Bn_geod_0'])/F
+Br_qd_0 = data_product['Bu_geod_0']/np.sqrt(F)
+data_product['Be_QD_0'] = Be_qd_0
+data_product['Bn_QD_0'] = Bn_qd_0
+data_product['Bu_QD_0'] = Br_qd_0
+
+#       Transform B sigma from geodetic to quasi-dipole (QD)
+Be_qd_0_sig = np.zeros(Ge.shape[0])
+Bn_qd_0_sig = np.zeros(Ge.shape[0])
+Bu_qd_0_sig = np.zeros(Ge.shape[0])
+for i in range(f1.shape[1]):
+    T = np.array([[f1[0, i]/F[i], f1[1, i]/F[i], 0],
+                  [f2[0, i]/F[i], f2[1, i]/F[i], 0],
+                  [0, 0, 1/np.sqrt(F[i])]])
+    B_Cpm_qd_i = T.dot(B_Cpm_geod_0[:, :, i]).dot(T.T)
+    Be_qd_0_sig[i] = np.sqrt(B_Cpm_qd_i[0, 0])
+    Bn_qd_0_sig[i] = np.sqrt(B_Cpm_qd_i[1, 1])
+    Bu_qd_0_sig[i] = np.sqrt(B_Cpm_qd_i[2, 2])
+
+data_product['Be_QD_std_0'] = Be_qd_0_sig
+data_product['Bn_QD_std_0'] = Bn_qd_0_sig
+data_product['Bu_QD_std_0'] = Bu_qd_0_sig
+
+#       Transform coords from geodetic to quasi-dipole (QD)
+QDlat_0, QDlon_0 = apex.geo2qd(data_product['geodlat_0'], grid.lon_mesh.flatten(), 
+                               np.ones(grid.xi_mesh.size)*0)
+data_product['QD_lat_0'] = QDlat_0
+data_product['QD_lon_0'] = QDlon_0
+
+# Calculate the magnetic local time (MLT) for each data set
+data_product['QD_MLT_0'] = pyamps.mlon_to_mlt(data_product['QD_lon_0'], date, date.year)
+data_product['QD_MLT_80'] = pyamps.mlon_to_mlt(data_product['QD_lon_80'], date, date.year)
+
+#%% Magnetic field predictions at L2 data locations [nT], geodetic coordinates + input
+
+# Input (satellite measurements)
+data_product['B_input'] = inv_result['d']
+
+# B predictions (Output from model)
+data_product['B_predictions'] = inv_result['d_pred']
+
+# coordinates
+data_product['geodlat'] = obs['lat']
+data_product['geodlon'] = obs['lon']
+data_product['input_height'] = np.ones(len(obs['lat']))*info['observation_height']*1e3
+
+#%% Plots
+
+# Br, Btheta, Bphi (geocentric!) at r=RE + 80 km and equivalent current at r=RI 
+    # Produced in using the standard_retrieval() function
+
+
+# Br, Btheta, Bphi (geocentric!) at r=RE km and equivalent current at r=RI 
+    # standard_retrieval() has been updated to also produce this plot
+
+
+# Spatial resolution maps in cross-track and along-track directions
+    # Produced in using the standard_retrieval() function
+
+
+# Plot of model variance projected into data space
+    # Produced in using the standard_retrieval() function
+
+
+# Flag map
+    # Produced in the 'Extrapolation - Prediction Domain (PD)' section of this script
+
+
+# Time series of fitted magnetic field with confidence intervals at measurement location + input data
+    # Produced in the following section 'Observations prediction comparison'
+    # The dots are the measurements made by the satellite along with a 90% confidence interval (1.645*standard deviation)
+    # The line along with the shaded area around it is the model fit and a 90% confidence interval.
+
+
+#%% Observations prediction comparison
+
+n = int(obs['lat'].size/4)
+
+B_obs = inv_result['d'].reshape((3, 4, n)) # 3 components of B, 4 Beams, n observations
+B_pred = inv_result['d_pred'].reshape((3, 4, n))
+
+sB_pred = np.zeros(B_pred.shape)
+sB_pred[0, :, :] = np.sqrt(np.diag(inv_result['G'][0].dot(inv_result['Cpm']).dot(inv_result['G'][0].T))).reshape((4, n))
+sB_pred[1, :, :] = np.sqrt(np.diag(inv_result['G'][1].dot(inv_result['Cpm']).dot(inv_result['G'][1].T))).reshape((4, n))
+sB_pred[2, :, :] = np.sqrt(np.diag(inv_result['G'][2].dot(inv_result['Cpm']).dot(inv_result['G'][2].T))).reshape((4, n))
+
+sB_obs = np.zeros(B_obs.shape)
+sB_obs[0, :, :] = np.sqrt(obs['cov_ee']).reshape(4, n)
+sB_obs[1, :, :] = np.sqrt(obs['cov_nn']).reshape(4, n)
+sB_obs[2, :, :] = np.sqrt(obs['cov_uu']).reshape(4, n)
+
+plt.ioff()
+fig, axs = plt.subplots(3, 1, figsize=(10, 10))
+for i, ax in enumerate(axs):
+    for j, c in enumerate(['tab:blue', 'tab:orange', 'tab:green', 'tab:red']):
+        ax.plot(B_obs[i, j, :], '.', markersize=5, color=c)
+        ax.errorbar(x = range(n), y = B_obs[i, j, :], yerr=1.645*sB_obs[i, j, :], color=c, linestyle='None', linewidth=0.8)
+        ax.fill_between(range(n), B_pred[i, j, :] - 1.645*sB_pred[i, j, :], B_pred[i, j, :] + 1.645*sB_pred[i, j, :], color=c, alpha=0.4)
+        ax.plot(B_pred[i, j, :], linewidth=2, color=c, label='Beam {}'.format(j+1))
+    ax.set_ylabel('nT')
+
+axs[2].legend()
+axs[0].text(1.05, 0.5, 'Be', va='center', ha='center', transform=axs[0].transAxes, fontsize=20)
+axs[1].text(1.05, 0.5, 'Bn', va='center', ha='center', transform=axs[1].transAxes, fontsize=20)
+axs[2].text(1.05, 0.5, 'Bu', va='center', ha='center', transform=axs[2].transAxes, fontsize=20)
+
+
+plt.savefig('/scratch/BCSS-DAG Dropbox/Michael Madelaire/computer/UiB/EZIE_code/EZIE/figure/data_prediction_comparison.png', bbox_inches='tight')
+plt.savefig('/scratch/BCSS-DAG Dropbox/Michael Madelaire/computer/UiB/EZIE_code/EZIE/figure/data_prediction_comparison.pdf', format='pdf', bbox_inches='tight')
+
+axs[0].set_ylim([-500, 800])
+axs[1].set_ylim([-750, 1000])
+
+plt.savefig('/scratch/BCSS-DAG Dropbox/Michael Madelaire/computer/UiB/EZIE_code/EZIE/figure/data_prediction_comparison_zoom.png', bbox_inches='tight')
+plt.savefig('/scratch/BCSS-DAG Dropbox/Michael Madelaire/computer/UiB/EZIE_code/EZIE/figure/data_prediction_comparison_zoom.pdf', format='pdf', bbox_inches='tight')
+plt.close('all')
+plt.ion()
+
 

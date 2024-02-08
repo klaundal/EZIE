@@ -24,11 +24,19 @@ def standard_retrieval(obs, t0, sc_lon0, sc_lat0, sc_ve0, sc_vn0,
                                        sc_ve0, sc_vn0, 
                                        map_params, get_f1, reg_params)
     
-    # Plot model predictions
+    # Plot model predictions at h=80
     plt.ioff()
     axs, cax = basic_plot(inv_result, grid, obs, RI, Rez, PD)
     plt.savefig('{}/{}.png'.format(plot_dir, plot_name), bbox_inches='tight')
     plt.savefig('{}/{}.pdf'.format(plot_dir, plot_name), format='pdf', bbox_inches='tight')
+    plt.close('all')
+    plt.ion()
+    
+    # Plot model predictions at h=0
+    plt.ioff()
+    axs, cax = basic_plot(inv_result, grid, obs, RI, map_params['RE'], PD)
+    plt.savefig('{}/{}_ground.png'.format(plot_dir, plot_name), bbox_inches='tight')
+    plt.savefig('{}/{}_ground.pdf'.format(plot_dir, plot_name), format='pdf', bbox_inches='tight')
     plt.close('all')
     plt.ion()
     
@@ -53,7 +61,7 @@ def standard_retrieval(obs, t0, sc_lon0, sc_lat0, sc_ve0, sc_vn0,
     plt.close('all')
     plt.ion()
     
-    return inv_result
+    return inv_result, grid
 
 #%% Lambda relation
 
@@ -516,16 +524,21 @@ def solve_inverse_problem(r, lat, lon, Be, Bn, Bu, lat_secs, lon_secs, LL, Q, RI
     reg = l1*gtg_mag*np.eye(LL.shape[0]) + l2*gtg_mag/LL_mag*LL
     
     inv_result = {}
+    inv_result['d'] = d
+    
     if full:
         inv_result['Cpm'] = scipy.linalg.solve(GTQG + reg, np.eye(reg.shape[0]))
         inv_result['R'] = inv_result['Cpm'].dot(GTQG)
         inv_result['m'] = inv_result['Cpm'].dot(GTQd)
+        inv_result['d_pred'] = G.dot(inv_result['m'])
+        inv_result['G'] = [Ge, Gn, Gu]
         
     else:
         inv_result['m'] = scipy.linalg.solve(GTQG + reg, GTQd)
+        inv_result['d_pred'] = G.dot(inv_result['m'])
 
     if Lcurve:
-        inv_result['res'] = d - G.dot(inv_result['m'])
+        inv_result['res'] = d - inv_result['d_pred']
         inv_result['dnorm'] = np.sqrt(inv_result['res'].T.dot(Q).dot(inv_result['res']))
         inv_result['mnorm'] = np.sqrt(inv_result['m'].T.dot(gtg_mag*np.eye(LL.shape[0]) + gtg_mag/LL_mag*LL).dot(inv_result['m']))
         inv_result['mnorm_l1'] = np.sqrt(inv_result['m'].T.dot(gtg_mag*np.eye(LL.shape[0])).dot(inv_result['m']))
@@ -556,16 +569,19 @@ def solve_inverse_problem_iterative(r, lat, lon, Be, Bn, Bu, lat_secs, lon_secs,
         reg = l1*gtg_mag*np.eye(LL.shape[0]) + l2*gtg_mag/LL_mag*LL
     
         inv_result = {}
+        inv_result['d'] = d
         if full:
             inv_result['Cpm'] = scipy.linalg.solve(GTQG + reg, np.eye(reg.shape[0]))
             inv_result['R'] = inv_result['Cpm'].dot(GTQG)
             inv_result['m'] = inv_result['Cpm'].dot(GTQd)
+            inv_result['d_pred'] = G.dot(inv_result['m'])
         
         else:
             inv_result['m'] = scipy.linalg.solve(GTQG + reg, GTQd)
+            inv_result['d_pred'] = G.dot(inv_result['m'])
 
         if Lcurve:
-            inv_result['res'] = d - G.dot(inv_result['m'])
+            inv_result['res'] = d - inv_result['d_pred']
             inv_result['dnorm'] = np.sqrt(inv_result['res'].T.dot(Q).dot(inv_result['res']))
             inv_result['mnorm'] = np.sqrt(inv_result['m'].T.dot(gtg_mag*np.eye(LL.shape[0]) + gtg_mag/LL_mag*LL).dot(inv_result['m']))
             inv_result['mnorm_l1'] = np.sqrt(inv_result['m'].T.dot(gtg_mag*np.eye(LL.shape[0])).dot(inv_result['m']))
@@ -800,4 +816,164 @@ def plot_map(ax, xiv, etav, var, obs, grid, RI, cmap, clevels, label, mask=-1, P
     ax.set_aspect('equal')
 
     return cc
+
+#%% Unnecessary code to satisfy Sam
+
+def geod2geoc(gdlat, height, Bn, Bu):
+    """
+    Convert from geocentric to geodetic coordinates
+
+    Example:
+    --------
+    theta, r, B_th, B_r = geod2lat(gdlat, height, Bn, Bu)
+
+    Parameters
+    ----------
+    gdlat : array
+        Geodetic latitude [degrees]
+    h : array
+        Height above ellipsoid [km]
+    Bn : array
+        Vector in northward direction, relative to ellipsoid
+    Bu : array
+        Vector in upward direction, relative to ellipsoid
+
+    Returns
+    -------
+    theta : array
+        Colatitudes [degrees]
+    r : array
+        Radius [km]
+    B_th : array
+        Vector component in theta direction
+    B_r : array
+        Vector component in radial direction
+    """
     
+    # World Geodetic System 84 parameters:
+    WGS84_e2 = 0.00669437999014
+    WGS84_a  = 6378.137 # km
+    
+    a = WGS84_a
+    b = a*np.sqrt(1 - WGS84_e2)
+
+    # Convert geodetic latitude angles to radians
+    gdlat_rad = np.radians(gdlat)
+
+    sin_alpha_2 = np.sin(gdlat_rad)**2
+    cos_alpha_2 = np.cos(gdlat_rad)**2
+
+    # calculate geocentric latitude and radius
+    tmp = height * np.sqrt(a**2 * cos_alpha_2 + b**2 * sin_alpha_2)
+    beta = np.arctan((tmp + b**2)/(tmp + a**2) * np.tan(gdlat_rad))
+    theta = np.pi/2 - beta
+    r = np.sqrt(height**2 + 2 * tmp + a**2 * (1 - (1 - (b/a)**4) * sin_alpha_2) / (1 - (1 - (b/a)**2) * sin_alpha_2))
+
+    # calculate geocentric components
+    psi  =  np.sin(gdlat_rad) * np.sin(theta) - np.cos(gdlat_rad) * np.cos(theta)
+    
+    B_r  = -np.sin(psi) * Bn + np.cos(psi) * Bu
+    B_th = -np.cos(psi) * Bn - np.sin(psi) * Bu
+
+    # Convert theta to degrees
+    theta = np.degrees(theta)
+
+    return theta, r, B_th, B_r
+
+
+def geoc2geod(theta, r, B_th, B_r, matrix=False):
+    """
+    Convert from geodetic to geocentric coordinates
+
+    Based on Matlab code by Nils Olsen, DTU
+
+    Example:
+    --------
+    gdlat, height, Bn, Bu = geod2lat(theta, r, B_th, B_r)
+
+    Parameters
+    ----------
+    theta : array
+        Colatitudes [degrees]
+    r : array
+        Radius [km]
+    B_th : array
+        Vector component in theta direction
+    B_r : array
+        Vector component in radial direction
+
+    Returns
+    -------
+    gdlat : array
+        Geodetic latitude [degrees]
+    h : array
+        Height above ellipsoid [km]
+    Bn : array
+        Vector in northward direction, relative to ellipsoid
+    Bu : array
+        Vector in upward direction, relative to ellipsoid
+    """
+    
+    WGS84_a  = 6378.137 # km
+    WGS84_e2 = 0.00669437999014
+    a = WGS84_a
+    b = a*np.sqrt(1 - WGS84_e2)
+
+    E2 = 1.-(b/a)**2
+    E4 = E2*E2
+    E6 = E4*E2
+    E8 = E4*E4
+    OME2REQ = (1.-E2)*a
+    A21 =     (512.*E2 + 128.*E4 + 60.*E6 + 35.*E8)/1024.
+    A22 =     (                        E6 +     E8)/  32.
+    A23 = -3.*(                     4.*E6 +  3.*E8)/ 256.
+    A41 =    -(           64.*E4 + 48.*E6 + 35.*E8)/1024.
+    A42 =     (            4.*E4 +  2.*E6 +     E8)/  16.
+    A43 =                                   15.*E8 / 256.
+    A44 =                                      -E8 /  16.
+    A61 =  3.*(                     4.*E6 +  5.*E8)/1024.
+    A62 = -3.*(                        E6 +     E8)/  32.
+    A63 = 35.*(                     4.*E6 +  3.*E8)/ 768.
+    A81 =                                   -5.*E8 /2048.
+    A82 =                                   64.*E8 /2048.
+    A83 =                                 -252.*E8 /2048.
+    A84 =                                  320.*E8 /2048.
+    
+    GCLAT = (90-theta)
+    SCL = np.sin(np.radians(GCLAT))
+    
+    RI = a/r
+    A2 = RI*(A21 + RI * (A22 + RI* A23))
+    A4 = RI*(A41 + RI * (A42 + RI*(A43+RI*A44)))
+    A6 = RI*(A61 + RI * (A62 + RI* A63))
+    A8 = RI*(A81 + RI * (A82 + RI*(A83+RI*A84)))
+    
+    CCL = np.sqrt(1-SCL**2)
+    S2CL = 2.*SCL  * CCL
+    C2CL = 2.*CCL  * CCL-1.
+    S4CL = 2.*S2CL * C2CL
+    C4CL = 2.*C2CL * C2CL-1.
+    S8CL = 2.*S4CL * C4CL
+    S6CL = S2CL * C4CL + C2CL * S4CL
+    
+    DLTCL = S2CL * A2 + S4CL * A4 + S6CL * A6 + S8CL * A8
+    gdlat = DLTCL + np.radians(GCLAT)
+    height = r * np.cos(DLTCL)- a * np.sqrt(1 -  E2 * np.sin(gdlat) ** 2)
+
+
+    # magnetic components 
+    theta_rad = np.radians(theta)
+    psi = np.sin(gdlat) * np.sin(theta_rad) - np.cos(gdlat) * np.cos(theta_rad)
+    
+    # Convert gdlat to degrees
+    gdlat = np.degrees(gdlat)
+    
+    if matrix:
+        T = np.array([[1, 0, 0], 
+                     [0, -np.cos(psi), -np.sin(psi)], 
+                     [0, -np.sin(psi), np.cos(psi)]])
+        return gdlat, height, T
+    
+    Bn = -np.cos(psi) * B_th - np.sin(psi) * B_r 
+    Bu = -np.sin(psi) * B_th + np.cos(psi) * B_r 
+    return gdlat, height, Bn, Bu
