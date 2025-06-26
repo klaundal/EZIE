@@ -92,3 +92,13 @@ GBegrid, GBngrid, GBugrid = get_SECS_B_G_matrices(grid.lat_mesh, grid.lon_mesh, 
 Be_model = GBegrid.dot(m)
 Bn_model = GBngrid.dot(m)
 Bu_model = GBugrid.dot(m)
+
+from secsy import CSplot
+fig, ax = plt.subplots()
+cax = CSplot(ax, grid)
+cax.pcolormesh(Bu_model.reshape(grid.lat_mesh.shape), vmin = -200, vmax = 200, cmap = plt.cm.bwr)
+cax.add_coastlines(resolution = '50m')
+cax.scatter(obs_lon, obs_lat, marker = '.', c = 'green', s = 1)
+cax.add_spherical_grid(color = 'grey')
+
+plt.show()
